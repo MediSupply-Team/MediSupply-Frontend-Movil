@@ -1,0 +1,38 @@
+name: CI - Ventas
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - 'ventas/**'
+  push:
+    branches: [ develop ]
+
+jobs:
+  CI_React_Native:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ventas
+
+    steps:
+      # 1) Descargar el código del repositorio
+      - name: Download code
+        uses: actions/checkout@v3
+
+      # 2) Configurar Node.js (versión estable para React Native)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.4'
+          cache: 'npm'
+          cache-dependency-path: ventas/package-lock.json
+
+      #3) Instalar dependencias
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+        #run: npm install
+
+      # 4) Ejecutar pruebas de Jest
+      - name: Run Jest
+        run: npm test -- --ci --maxWorkers=50%
