@@ -26,3 +26,26 @@ rutaApi.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+export const clienteApi = axios.create({
+  baseURL: `${BASE}:3003`,
+  timeout: 10000,
+  headers: { "Content-Type": "application/json" },
+});
+
+clienteApi.interceptors.request.use((config) => {
+  console.log(
+    "📤 Cliente:",
+    config.method?.toUpperCase(),
+    `${config.baseURL ?? ""}${config.url ?? ""}`
+  );
+  return config;
+});
+
+clienteApi.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    console.log("❌ Cliente Error:", err?.response?.status, err?.response?.data ?? err.message);
+    return Promise.reject(err);
+  }
+);
