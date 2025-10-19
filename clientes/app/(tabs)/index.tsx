@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  Dimensions,
+  ActivityIndicator,
   Image,
   ScrollView,
   Text,
@@ -12,17 +13,58 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const { width } = Dimensions.get('window');
+import { useCatalogProducts, useProductsByCategory, useSearchProducts } from '@/hooks/useCatalog';
+import { CATEGORIAS, type CategoriaId, type ProductoCatalogo } from '@/types/catalog';
 
 export default function CatalogoScreen() {
-  const [cartCount, setCartCount] = useState(3);
-  const [quantity, setQuantity] = useState(1);
+  const [cartCount, setCartCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<CategoriaId | ''>('');
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
+  // Hooks del catálogo (todos se ejecutan siempre)
+  const catalogQuery = useCatalogProducts();
+  const searchQuery_result = useSearchProducts(searchQuery, !!searchQuery);
+  const categoryQuery = useProductsByCategory(selectedCategory || 'ANTIBIOTICS', !!selectedCategory);
+
+  // Determinamos qué datos usar basado en el estado actual
+  const activeQuery = useMemo(() => {
+    if (searchQuery) return searchQuery_result;
+    if (selectedCategory) return categoryQuery;
+    return catalogQuery;
+  }, [searchQuery, selectedCategory, searchQuery_result, categoryQuery, catalogQuery]);
+
+  const { data: catalogData, isLoading, error } = activeQuery;
+  const productos = catalogData?.items || [];
+
+  // Helper para obtener cantidad de un producto específico
+  const getProductQuantity = (codigo: string) => quantities[codigo] || 1;
+
+  // Helper para actualizar cantidad de un producto
+  const updateQuantity = (codigo: string, newQuantity: number) => {
+    if (newQuantity >= 1) {
+      setQuantities(prev => ({
+        ...prev,
+        [codigo]: newQuantity
+      }));
+    }
+  };
+
+  // Helper para agregar al carrito
+  const addToCart = (product: ProductoCatalogo, quantity: number) => {
+    // Aquí conectarías con el store del carrito cuando lo tengas
+    setCartCount(prev => prev + quantity);
+    console.log(`Agregado al carrito: ${product.nombre} x${quantity}`);
+  };
+
+  // Categorías dinámicas
   const categories = [
-    { id: '1', name: 'Todos', active: true },
-    { id: '2', name: 'Insumos Quirúrgicos', active: false },
-    { id: '3', name: 'Medicamentos', active: false },
-    { id: '4', name: 'Equipos', active: false }
+    { id: '', name: 'Todos', active: selectedCategory === '' },
+    ...Object.entries(CATEGORIAS).map(([id, name]) => ({
+      id: id as CategoriaId,
+      name,
+      active: selectedCategory === id
+    }))
   ];
 
   return (
@@ -41,7 +83,10 @@ export default function CatalogoScreen() {
           </Text>
           
           <View className="relative">
-            <TouchableOpacity className="p-2">
+            <TouchableOpacity 
+              className="p-2"
+              onPress={() => router.push('/carrito')}
+            >
               <Ionicons name="cart-outline" size={24} color="#1193d4" />
             </TouchableOpacity>
             <View className="absolute -top-1 -right-1 bg-primary rounded-full h-5 w-5 items-center justify-center">
@@ -60,6 +105,8 @@ export default function CatalogoScreen() {
               className="w-full bg-gray-100 rounded-full py-3 pl-10 pr-4 text-base text-gray-800"
               placeholder="Buscar productos"
               placeholderTextColor="#6b7280"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
           </View>
         </View>
@@ -79,6 +126,7 @@ export default function CatalogoScreen() {
                       ? 'bg-primary' 
                       : 'bg-gray-200'
                   }`}
+                  onPress={() => setSelectedCategory(category.id as CategoriaId | '')}
                 >
                   <Text className={`text-sm font-medium ${
                     category.active 
@@ -93,138 +141,159 @@ export default function CatalogoScreen() {
           </ScrollView>
         </View>
 
-        {/* Featured Products Section */}
+        {/* Products Section */}
         <View className="px-4 pb-20">
-          <Text className="text-lg font-bold text-gray-800 mb-3">Productos Destacados</Text>
+          <Text className="text-lg font-bold text-gray-800 mb-3">
+            {searchQuery ? `Resultados para "${searchQuery}"` : 
+             selectedCategory ? `Categoría: ${categories.find(c => c.id === selectedCategory)?.name}` : 
+             'Productos Destacados'}
+          </Text>
           
-          {/* Product Card 1 */}
-          <View className="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
-            {/* Product Image */}
-            <View className="h-48 bg-gray-100 items-center justify-center">
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop'
-                }}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
+          {/* Loading State */}
+          {isLoading && (
+            <View className="items-center py-8">
+              <ActivityIndicator size="large" color="#1193d4" />
+              <Text className="text-gray-500 mt-2">Cargando productos...</Text>
             </View>
-            
-            {/* Product Info */}
-            <View className="p-4">
-              <Text className="text-base font-semibold text-gray-800 mb-1">
-                Guantes de Látex Estériles
-              </Text>
-              <Text className="text-sm text-gray-500 mb-3">
-                Código: GL-12345
-              </Text>
-              
-              <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-lg font-bold text-gray-800">
-                  $12.50
-                </Text>
-                <View className="bg-green-100 px-2 py-1 rounded-md">
-                  <Text className="text-xs font-medium text-green-700">
-                    Stock: 35
-                  </Text>
-                </View>
-              </View>
-              
-              {/* Quantity and Add to Cart */}
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-3">
-                  <TouchableOpacity 
-                    className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center"
-                    onPress={() => quantity > 1 && setQuantity(quantity - 1)}
-                  >
-                    <Ionicons name="remove" size={16} color="#6b7280" />
-                  </TouchableOpacity>
-                  
-                  <Text className="text-base font-medium text-gray-800 min-w-[24px] text-center">
-                    {quantity}
-                  </Text>
-                  
-                  <TouchableOpacity 
-                    className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center"
-                    onPress={() => setQuantity(quantity + 1)}
-                  >
-                    <Ionicons name="add" size={16} color="#6b7280" />
-                  </TouchableOpacity>
-                </View>
-                
-                <TouchableOpacity 
-                  className="bg-primary px-4 py-2 rounded-lg flex-row items-center gap-1"
-                  onPress={() => setCartCount(cartCount + quantity)}
-                >
-                  <Ionicons name="cart" size={16} color="white" />
-                  <Text className="text-white font-semibold text-sm">Agregar</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+          )}
 
-          {/* Product Card 2 */}
-          <View className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <View className="h-48 bg-gray-100 items-center justify-center">
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop'
-                }}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
+          {/* Error State */}
+          {error && (
+            <View className="items-center py-8">
+              <Text className="text-red-500 mb-2">Error al cargar productos</Text>
+              <TouchableOpacity 
+                className="bg-primary px-4 py-2 rounded-lg"
+                onPress={() => activeQuery.refetch()}
+              >
+                <Text className="text-white font-medium">Reintentar</Text>
+              </TouchableOpacity>
             </View>
+          )}
+
+          {/* Products List */}
+          {!isLoading && !error && productos.map((product) => {
+            const quantity = getProductQuantity(product.codigo);
+            const hasStock = (product.inventarioResumen?.cantidadTotal || 0) > 0;
             
-            <View className="p-4">
-              <Text className="text-base font-semibold text-gray-800 mb-1">
-                Solución Salina 0.9%
-              </Text>
-              <Text className="text-sm text-gray-500 mb-3">
-                Código: SS-67890
-              </Text>
-              
-              <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-lg font-bold text-gray-800">
-                  $8.75
-                </Text>
-                <View className="bg-red-100 px-2 py-1 rounded-md">
-                  <Text className="text-xs font-medium text-red-700">
-                    Stock: 0
-                  </Text>
-                </View>
-              </View>
-              
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-3">
-                  <TouchableOpacity 
-                    className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center bg-gray-200"
-                    disabled
-                  >
-                    <Ionicons name="remove" size={16} color="#9ca3af" />
-                  </TouchableOpacity>
-                  
-                  <Text className="text-base font-medium text-gray-400 min-w-[24px] text-center">
-                    0
-                  </Text>
-                  
-                  <TouchableOpacity 
-                    className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center bg-gray-200"
-                    disabled
-                  >
-                    <Ionicons name="add" size={16} color="#9ca3af" />
-                  </TouchableOpacity>
+            return (
+              <View key={product.id} className="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+                {/* Product Image */}
+                <View className="h-48 bg-gray-100 items-center justify-center">
+                  <Image
+                    source={{
+                      uri: 'https://plus.unsplash.com/premium_photo-1668487826871-2f2cac23ad56?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1112'
+                    }}
+                    className="w-full h-full"
+                    resizeMode="cover"
+                  />
                 </View>
                 
-                <TouchableOpacity 
-                  className="bg-gray-300 px-4 py-2 rounded-lg flex-row items-center gap-1"
-                  disabled
-                >
-                  <Ionicons name="cart" size={16} color="#6b7280" />
-                  <Text className="text-gray-500 font-semibold text-sm">Sin Stock</Text>
-                </TouchableOpacity>
+                {/* Product Info */}
+                <View className="p-4">
+                  <Text className="text-base font-semibold text-gray-800 mb-1">
+                    {product.nombre}
+                  </Text>
+                  <Text className="text-sm text-gray-500 mb-3">
+                    Código: {product.codigo}
+                  </Text>
+                  
+                  <View className="flex-row items-center justify-between mb-4">
+                    <Text className="text-lg font-bold text-gray-800">
+                      ${product.precioUnitario.toFixed(2)}
+                    </Text>
+                    <View className={`px-2 py-1 rounded-md ${
+                      hasStock ? 'bg-green-100' : 'bg-red-100'
+                    }`}>
+                      <Text className={`text-xs font-medium ${
+                        hasStock ? 'text-green-700' : 'text-red-700'
+                      }`}>
+                        Stock: {product.inventarioResumen?.cantidadTotal || 0}
+                      </Text>
+                    </View>
+                  </View>
+                  
+                  {/* Quantity and Add to Cart */}
+                  <View className="flex-row items-center justify-between">
+                    {hasStock ? (
+                      <>
+                        <View className="flex-row items-center gap-3">
+                          <TouchableOpacity 
+                            className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center"
+                            onPress={() => updateQuantity(product.codigo, quantity - 1)}
+                            disabled={quantity <= 1}
+                          >
+                            <Ionicons name="remove" size={16} color={quantity <= 1 ? "#9ca3af" : "#6b7280"} />
+                          </TouchableOpacity>
+                          
+                          <Text className="text-base font-medium text-gray-800 min-w-[24px] text-center">
+                            {quantity}
+                          </Text>
+                          
+                          <TouchableOpacity 
+                            className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center"
+                            onPress={() => updateQuantity(product.codigo, quantity + 1)}
+                            disabled={quantity >= (product.inventarioResumen?.cantidadTotal || 0)}
+                          >
+                            <Ionicons name="add" size={16} color={quantity >= (product.inventarioResumen?.cantidadTotal || 0) ? "#9ca3af" : "#6b7280"} />
+                          </TouchableOpacity>
+                        </View>
+                        
+                        <TouchableOpacity 
+                          className="bg-primary px-4 py-2 rounded-lg flex-row items-center gap-1"
+                          onPress={() => addToCart(product, quantity)}
+                        >
+                          <Ionicons name="cart" size={16} color="white" />
+                          <Text className="text-white font-semibold text-sm">Agregar</Text>
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                      <>
+                        <View className="flex-row items-center gap-3">
+                          <TouchableOpacity 
+                            className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center bg-gray-200"
+                            disabled
+                          >
+                            <Ionicons name="remove" size={16} color="#9ca3af" />
+                          </TouchableOpacity>
+                          
+                          <Text className="text-base font-medium text-gray-400 min-w-[24px] text-center">
+                            0
+                          </Text>
+                          
+                          <TouchableOpacity 
+                            className="w-8 h-8 border border-gray-300 rounded-full items-center justify-center bg-gray-200"
+                            disabled
+                          >
+                            <Ionicons name="add" size={16} color="#9ca3af" />
+                          </TouchableOpacity>
+                        </View>
+                        
+                        <TouchableOpacity 
+                          className="bg-gray-300 px-4 py-2 rounded-lg flex-row items-center gap-1"
+                          disabled
+                        >
+                          <Ionicons name="cart" size={16} color="#6b7280" />
+                          <Text className="text-gray-500 font-semibold text-sm">Sin Stock</Text>
+                        </TouchableOpacity>
+                      </>
+                    )}
+                  </View>
+                </View>
               </View>
+            );
+          })}
+
+          {/* Empty State */}
+          {!isLoading && !error && productos.length === 0 && (
+            <View className="items-center py-8">
+              <Text className="text-gray-500 mb-2">No se encontraron productos</Text>
+              <Text className="text-gray-400 text-sm text-center">
+                {searchQuery ? 'Intenta con otros términos de búsqueda' : 
+                 selectedCategory ? 'Esta categoría no tiene productos disponibles' : 
+                 'No hay productos disponibles en este momento'}
+              </Text>
             </View>
-          </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
