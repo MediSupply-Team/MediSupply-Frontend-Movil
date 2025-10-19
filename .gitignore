@@ -45,5 +45,6 @@ logs/
 tmp/
 temp/
 
+.npmrc
 #Coverage
 ventas/coverage/

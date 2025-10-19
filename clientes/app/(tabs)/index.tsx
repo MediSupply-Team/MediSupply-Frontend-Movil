@@ -1,3 +1,4 @@
+import { useCartStore } from '@/store/cartStore';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -17,7 +18,7 @@ import { useCatalogProducts, useProductsByCategory, useSearchProducts } from '@/
 import { CATEGORIAS, type CategoriaId, type ProductoCatalogo } from '@/types/catalog';
 
 export default function CatalogoScreen() {
-  const [cartCount, setCartCount] = useState(0);
+  const { addItem, getTotalItems } = useCartStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoriaId | ''>('');
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
@@ -50,10 +51,19 @@ export default function CatalogoScreen() {
     }
   };
 
-  // Helper para agregar al carrito
+  // Helper para agregar al carrito - convertir ProductoCatalogo a Product del store
   const addToCart = (product: ProductoCatalogo, quantity: number) => {
-    // Aquí conectarías con el store del carrito cuando lo tengas
-    setCartCount(prev => prev + quantity);
+    // Convertir el producto del catálogo al formato del carrito
+    const cartProduct = {
+      id: product.id,
+      name: product.nombre,
+      price: product.precioUnitario,
+      code: product.codigo,
+      stock: product.inventarioResumen?.cantidadTotal || 0,
+      image: 'https://plus.unsplash.com/premium_photo-1668487826871-2f2cac23ad56?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1112'
+    };
+    
+    addItem(cartProduct, quantity);
     console.log(`Agregado al carrito: ${product.nombre} x${quantity}`);
   };
 
@@ -66,6 +76,10 @@ export default function CatalogoScreen() {
       active: selectedCategory === id
     }))
   ];
+
+  const navigateToCart = () => {
+    router.push('/carrito');
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background-light">
@@ -83,14 +97,11 @@ export default function CatalogoScreen() {
           </Text>
           
           <View className="relative">
-            <TouchableOpacity 
-              className="p-2"
-              onPress={() => router.push('/carrito')}
-            >
+            <TouchableOpacity className="p-2" onPress={navigateToCart}>
               <Ionicons name="cart-outline" size={24} color="#1193d4" />
             </TouchableOpacity>
             <View className="absolute -top-1 -right-1 bg-primary rounded-full h-5 w-5 items-center justify-center">
-              <Text className="text-xs font-bold text-white">{cartCount}</Text>
+              <Text className="text-xs font-bold text-white">{getTotalItems()}</Text>
             </View>
           </View>
         </View>

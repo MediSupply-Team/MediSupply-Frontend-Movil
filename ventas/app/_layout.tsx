@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -9,6 +10,12 @@ import { useFonts } from 'expo-font';
 
 import { useEffect } from 'react';
 import "../global.css";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { refetchOnWindowFocus: false } },
+});
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -30,17 +37,22 @@ export default function RootLayout() {
     if (error) throw error;
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error]);
-  
-  if (!fontsLoaded) return null;
-  
+
+  if (!fontsLoaded && !error) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+            <Stack.Screen name="cliente/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="permissions/index" options={{ headerShown: false }} />        
+          </Stack>
+          <StatusBar style="auto" translucent={false}/>
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </QueryClientProvider>
   );
 }
