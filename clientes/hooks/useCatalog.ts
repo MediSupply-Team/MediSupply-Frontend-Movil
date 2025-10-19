@@ -1,11 +1,11 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { catalogApi } from "@/services/catalogApi";
-import type { 
-  CatalogoResponse, 
-  CatalogoParams, 
-  ProductoCatalogo,
-  InventarioResponse 
+import type {
+    CatalogoParams,
+    CatalogoResponse,
+    InventarioResponse,
+    ProductoCatalogo
 } from "@/types/catalog";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 // Hook para listar productos del catálogo
 export function useCatalogProducts(params: CatalogoParams = {}) {
