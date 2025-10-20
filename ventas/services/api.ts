@@ -1,11 +1,12 @@
 // services/api.ts
 import axios from "axios";
-import { apiHost } from "../config/baseUrl";
+import { getServiceUrl, logEnvironmentInfo } from "../config/baseUrl";
 
-const BASE = apiHost();
+// Log de configuración al inicializar
+logEnvironmentInfo();
 
 export const rutaApi = axios.create({
-  baseURL: `${BASE}:3002`,
+  baseURL: getServiceUrl('rutas'),
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
 });
@@ -28,7 +29,7 @@ rutaApi.interceptors.response.use(
 );
 
 export const clienteApi = axios.create({
-  baseURL: `${BASE}:3003`,
+  baseURL: getServiceUrl('cliente'),
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
 });

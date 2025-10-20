@@ -104,7 +104,7 @@ export interface MetricasServicio {
 export interface ParamsListarClientes {
   limite?: number;
   offset?: number;
-  activos_solo?: boolean;
+  activos_solo?: string; // Cambio: de boolean a string para ser compatible con el backend
 }
 
 export interface ParamsBuscarCliente {
