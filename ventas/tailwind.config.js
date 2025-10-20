@@ -37,6 +37,15 @@ module.exports = {
         info: {
           500: '#3b82f6',
         },
+        // Colores adicionales para mejor compatibilidad
+        green: {
+          100: '#dcfce7',
+          700: '#15803d',
+        },
+        red: {
+          100: '#fee2e2',
+          700: '#b91c1c',
+        },
       },
 
       fontFamily: {

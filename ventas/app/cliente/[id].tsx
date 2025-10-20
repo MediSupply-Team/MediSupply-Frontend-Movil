@@ -323,7 +323,13 @@ export default function ClienteDetalleScreen() {
             <MaterialIcons name="add-comment" size={20} color="white" />
             <Text style={styles.primaryButtonText}>Registrar Visita</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryButton}>
+          <TouchableOpacity 
+            style={styles.secondaryButton}
+            onPress={() => router.push({
+              pathname: '/pedido/catalogo' as any,
+              params: { clienteId: clienteId }
+            })}
+          >
             <MaterialIcons name="add-shopping-cart" size={20} color={Colors.light.neutral800} />
             <Text style={styles.secondaryButtonText}>Crear Pedido</Text>
           </TouchableOpacity>
