@@ -51,3 +51,4 @@ ui-mocks/
 /coverage
 
 .npmrc
+CLIENTE_API_INTEGRATION.md

@@ -47,3 +47,4 @@ app-example
 .history/
 
 .npmrc
+ui-mocks/
