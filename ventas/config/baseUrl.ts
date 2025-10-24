@@ -17,8 +17,8 @@ const ENVIRONMENTS = {
   },
   aws: {
     // AWS - Endpoints desplegados (desde la guía)
-    bffVenta: "http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com",
-    bffCliente: "http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com",
+    bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
+    bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
     ordersService: "", // Se usa a través del BFF
     clienteService: "", // Se usa a través del BFF  
     catalogService: "", // Se usa a través del BFF
@@ -26,8 +26,8 @@ const ENVIRONMENTS = {
   },
   production: {
     // Producción (mismo que AWS por ahora)
-    bffVenta: "http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com",
-    bffCliente: "http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com",
+    bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
+    bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
     ordersService: "",
     clienteService: "",  
     catalogService: "",
