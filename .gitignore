@@ -44,3 +44,7 @@ logs/
 # Temporary files
 tmp/
 temp/
+
+.npmrc
+#Coverage
+ventas/coverage/

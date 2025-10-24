@@ -6,5 +6,21 @@ module.exports = defineConfig([
   expoConfig,
   {
     ignores: ['dist/*'],
+    settings: {
+      'import/resolver': {
+        'babel-module': {
+          root: ['./'],
+          alias: {
+            '@': './',
+            '@/types': './types',
+            '@/hooks': './hooks',
+            '@/services': './services',
+            '@/config': './config',
+            '@/components': './components',
+            '@/constants': './constants'
+          },
+        },
+      },
+    },
   },
 ]);

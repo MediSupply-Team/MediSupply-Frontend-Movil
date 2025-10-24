@@ -45,3 +45,4 @@ app-example
 # VS Code
 .vscode/
 .history/
+ui-mocks/
