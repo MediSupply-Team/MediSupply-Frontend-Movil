@@ -17,8 +17,8 @@ const ENVIRONMENTS = {
   },
   aws: {
     // AWS - Endpoints desplegados (desde la guía)
-    bffVenta: "http://medisupply-dev-bff-venta-alb-1773752444.us-east-1.elb.amazonaws.com",
-    bffCliente: "http://medisupply-dev-bff-cliente-alb-1141787956.us-east-1.elb.amazonaws.com",
+    bffVenta: "http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com",
+    bffCliente: "http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com",
     ordersService: "", // Se usa a través del BFF
     clienteService: "", // Se usa a través del BFF  
     catalogService: "", // Se usa a través del BFF
@@ -26,8 +26,8 @@ const ENVIRONMENTS = {
   },
   production: {
     // Producción (mismo que AWS por ahora)
-    bffVenta: "http://medisupply-dev-bff-venta-alb-1773752444.us-east-1.elb.amazonaws.com",
-    bffCliente: "http://medisupply-dev-bff-cliente-alb-1141787956.us-east-1.elb.amazonaws.com",
+    bffVenta: "http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com",
+    bffCliente: "http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com",
     ordersService: "",
     clienteService: "",  
     catalogService: "",
@@ -91,7 +91,7 @@ export function getServiceUrl(service: 'orders' | 'cliente' | 'catalog' | 'rutas
     const paths = {
       orders: '/api/v1/orders',      // BFF maneja órdenes
       cliente: '/api/cliente/',      // BFF Cliente maneja clientes (con / final)
-      catalog: '/catalog',           // BFF Venta proxy a catálogo
+      catalog: '/api/v1/catalog',           // BFF Venta proxy a catálogo
       rutas: '/api/v1/rutas'        // BFF Venta maneja rutas
     };
     
