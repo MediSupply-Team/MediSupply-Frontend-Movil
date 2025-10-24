@@ -1,0 +1,86 @@
+name: CD - Clientes (APK)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'clientes/**'
+  # push:
+  #   branches: [test/ci-cd]
+
+jobs:
+  build_or_reuse_apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: clientes
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # necesario para comparar cambios
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: clientes/package-lock.json
+
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+
+      # Detecta cambios que afecten el build nativo / bundle
+      - name: Detect relevant changes
+        id: changes
+        uses: tj-actions/changed-files@v45
+        with:
+          files_yaml: |
+            app:
+              - clientes/app.json
+              - clientes/eas.json
+              - clientes/package.json
+              - clientes/**.ts
+              - clientes/**.tsx
+              - clientes/**.js
+              - clientes/**.jsx
+              - clientes/app/**     # expo-router
+              - clientes/src/**
+
+      # Si hubo cambios => construye nuevo APK
+      - name: Build APK (preview) on EAS
+        id: build
+        if: steps.changes.outputs.app_any_changed == 'true'
+        run: |
+          OUT=$(npx --yes eas-cli@latest build --platform android --profile preview --non-interactive --json)
+          echo "$OUT" > build.json
+          echo "artifact_url=$(node -e "const d=JSON.parse(require('fs').readFileSync('build.json','utf8'))[0]; console.log((d.artifacts && (d.artifacts.buildUrl || d.artifacts.applicationArchiveUrl)) || '')")" >> $GITHUB_OUTPUT
+
+      # Si NO hubo cambios => reutiliza el último build FINISHED
+      - name: Reuse latest finished build (no changes)
+        id: reuse
+        if: steps.changes.outputs.app_any_changed != 'true'
+        run: |
+          OUT=$(npx --yes eas-cli@latest build:list --platform android --status finished --limit 1 --non-interactive --json)
+          echo "$OUT" > last.json
+          echo "artifact_url=$(node -e "const d=JSON.parse(require('fs').readFileSync('last.json','utf8'))[0]; console.log((d?.artifacts && (d.artifacts.buildUrl || d.artifacts.applicationArchiveUrl)) || '')")" >> $GITHUB_OUTPUT
+
+      # Descargar el APK (nuevo o reutilizado)
+      - name: Download APK
+        run: |
+          mkdir -p dist
+          URL="${{ steps.build.outputs.artifact_url || steps.reuse.outputs.artifact_url }}"
+          if [ -z "$URL" ]; then
+            echo "No se encontró artifact_url. ¿Hay builds previos FINISHED en EAS?"
+            exit 1
+          fi
+          curl -L "$URL" -o dist/app-preview.apk
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clientes-app-preview.apk
+          path: clientes/dist/app-preview.apk
