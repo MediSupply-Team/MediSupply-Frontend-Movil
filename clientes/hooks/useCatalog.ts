@@ -12,11 +12,21 @@ export function useCatalogProducts(params: CatalogoParams = {}) {
   return useQuery({
     queryKey: ["catalog", "items", params],
     queryFn: async (): Promise<CatalogoResponse> => {
-      const response = await catalogApi.get("/items", { params });
-      return response.data;
+      console.log("🚀 [HOOK] Starting catalog request with params:", params);
+      try {
+        const response = await catalogApi.get("/items", { params });
+        console.log("🎉 [HOOK] Catalog response received:", response.status);
+        console.log("🎉 [HOOK] Response data keys:", Object.keys(response.data || {}));
+        return response.data;
+      } catch (error) {
+        console.error("💥 [HOOK] Catalog request failed:", error);
+        throw error;
+      }
     },
     placeholderData: keepPreviousData, // Mantener datos previos mientras carga
     staleTime: 1000 * 60 * 5, // 5 minutos
+    retry: 3, // Reintentar 3 veces
+    retryDelay: 1000, // Esperar 1 segundo entre reintentos
   });
 }
 

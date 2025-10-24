@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.julianrvillamil.clientes"
+      "package": "com.julianrvillamil.clientes",
+      "networkSecurityConfig": "network_security_config"
     },
     "web": {
       "output": "static",
@@ -45,6 +46,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f9b659d3-eff2-4bd3-b057-8ce7f7e7d0cd"
+      }
     }
   }
 }

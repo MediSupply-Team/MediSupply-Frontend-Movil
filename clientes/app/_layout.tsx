@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import "../global.css";
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { APKSimulator } from '@/components/APKSimulator';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -23,6 +24,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <APKSimulator />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="carrito" options={{ headerShown: false }} />

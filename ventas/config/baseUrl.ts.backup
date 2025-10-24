@@ -1,6 +1,5 @@
 // config/baseUrl.ts
 import { Platform } from "react-native";
-import { isAPKMode } from './apkSimulation';
 
 // Tipos de ambientes disponibles
 export type Environment = 'local' | 'aws' | 'production';
@@ -41,25 +40,24 @@ export function getCurrentEnvironment(): Environment {
   // 1. Variable de entorno explícita
   const envVar = process.env.EXPO_PUBLIC_ENVIRONMENT as Environment;
   if (envVar && ['local', 'aws', 'production'].includes(envVar)) {
-    console.log(`Environment from var: ${envVar}`);
+    console.log(`🎯 Environment from var: ${envVar}`);
     return envVar;
   }
   
-  // 2. APK compilado O simulación APK - FORZAR producción
-  if (isAPKMode()) {
-    console.log(`APK mode detected (real or simulated) - using PRODUCTION`);
-    console.log(`Platform: ${Platform.OS}`);
-    console.log(`__DEV__: ${__DEV__}`);
-    console.log(`isAPKMode(): ${isAPKMode()}`);
+  // 2. APK compilado - FORZAR producción para mejor compatibilidad
+  if (!__DEV__) {
+    console.log(`🚀 APK/Production mode detected - using PRODUCTION`);
+    console.log(`📱 Platform: ${Platform.OS}`);
+    console.log(`🔧 __DEV__: ${__DEV__}`);
     return 'production';
   }
   
   // 3. Modo desarrollo
-  console.log(`Development mode - using LOCAL`);
+  console.log(`🔧 Development mode - using LOCAL`);
   return 'local';
 }
 
-// Función para obtener el host base adaptado para emuladores/dispositivos  
+// Función para obtener el host base adaptado para emuladores/dispositivos
 export function apiHost() {
   const environment = getCurrentEnvironment();
   
@@ -73,7 +71,7 @@ export function apiHost() {
   } else {
     // Para AWS/producción, usamos las URLs directas de la guía
     const config = ENVIRONMENTS[environment];
-    return config.bffCliente; // BFF Cliente como entrada principal para app clientes
+    return config.bffVenta; // BFF Venta como entrada principal
   }
 }
 
@@ -92,26 +90,33 @@ export function getServiceUrl(service: 'orders' | 'cliente' | 'catalog' | 'rutas
       rutas: '8003'      // Rutas Service
     };
     
+    // Para local, solo devolvemos la URL base del servicio
+    // Los paths específicos los maneja cada servicio individualmente
     return `${base}:${ports[service]}`;
   } else {
     // AWS/Producción: todo a través de los BFFs (según la guía)
     const paths = {
       orders: '/api/v1/orders',      // BFF maneja órdenes
-      cliente: '/api/v1/client/',      // BFF Cliente maneja clientes (con / final)
-      catalog: '/api/v1/catalog',           // BFF Venta proxy a catálogo
+      cliente: '',                   // BFF Cliente - base URL solamente
+      catalog: '/api/v1/catalog',    // BFF Venta proxy a catálogo  
       rutas: '/api/v1/rutas'        // BFF Venta maneja rutas
     };
     
-    // Para clientes, la mayoría van por BFF Cliente, excepto catálogo que va por BFF Venta
-    if (service === 'catalog' || service === 'rutas') {
-      return `${config.bffVenta}${paths[service]}`;
-    } else {
-      // orders, cliente van por BFF Cliente
+    // Para AWS, usamos diferentes BFFs según el servicio (como indica la guía)
+    if (service === 'cliente') {
       return `${config.bffCliente}${paths[service]}`;
+    } else {
+      // orders, catalog, rutas van por BFF Venta
+      return `${config.bffVenta}${paths[service]}`;
     }
   }
 }
 
+// Helper para logs detallados
+export function logEnvironmentInfo() {
+  const env = getCurrentEnvironment();
+  
+  console.log(`
 // Helper para logs detallados
 export function logEnvironmentInfo() {
   const environment = getCurrentEnvironment();
@@ -141,4 +146,19 @@ export function logEnvironmentInfo() {
   console.log('   export EXPO_PUBLIC_ENVIRONMENT=aws');
   console.log('   npm run start:aws');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+}
+  `);
+}
+
+// Función de testing de conectividad
+export async function testConnectivity() {
+  const environment = getCurrentEnvironment();
+  console.log(`🧪 Probando conectividad en ambiente: ${environment}`);
+  
+  const services = ['orders', 'cliente', 'catalog', 'rutas'] as const;
+  
+  for (const service of services) {
+    const url = getServiceUrl(service);
+    console.log(`🔍 Testing ${service}: ${url}`);
+  }
 }

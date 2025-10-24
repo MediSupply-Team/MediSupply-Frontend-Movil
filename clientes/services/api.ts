@@ -7,8 +7,12 @@ logEnvironmentInfo();
 
 export const ordersApi = axios.create({
   baseURL: getServiceUrl('orders'),
-  timeout: 15000,
-  headers: { "Content-Type": "application/json" },
+  timeout: 30000, // Timeout aumentado para APK
+  headers: { 
+    "Content-Type": "application/json",
+    "User-Agent": "MediSupply-Clientes-APK/1.0",
+    "Accept": "application/json"
+  },
 });
 
 ordersApi.interceptors.request.use((config) => {
