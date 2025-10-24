@@ -5,8 +5,10 @@ on:
     branches: [develop]
     paths:
       - 'ventas/**'
-  push:
-    branches: [ develop ]
+  # push:
+  #   branches: [ develop ]
+  #   paths:
+  #     - 'ventas/**'
 
 jobs:
   CI_React_Native:
@@ -33,6 +35,22 @@ jobs:
         run: npm ci --no-audit --no-fund
         #run: npm install
 
-      # 4) Ejecutar pruebas de Jest
-      - name: Run Jest
-        run: npm test -- --ci --maxWorkers=50%
+      # 4) Ejecutar pruebas de Jest y covertura
+      - name: Run Jest (with coverage)
+        run: |
+            npm test -- --ci --maxWorkers=50% --coverage \
+            --coverageThreshold='{"global":{"statements":0,"branches":0,"functions":0,"lines":0}}'
+        # run: npm test -- --ci --coverage --maxWorkers=50%
+
+      # 5) Generacion de reportes de cobertura
+      - name: Upload coverage summary (LCOV)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: ventas/coverage/lcov.info
+
+      - name: Upload coverage HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: ventas/coverage

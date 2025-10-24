@@ -38,17 +38,15 @@ export default function CarritoScreen() {
       return;
     }
 
-    // Mapea tus items al formato del backend
+    // Mapea tus items al formato del backend según el esquema del orders-service
     const payload = {
       customer_id: "hospital-central-001", // ID del cliente según el backend
-      shippingAddress: "Calle Principal 123, Ciudad, Estado",
+      created_by_role: "cliente" as const,
+      source: "mobile-clientes" as const,
       items: cartItems.map((i) => ({
         sku: i.code,               // SKU del producto (código)
-        name: i.name,
-        unitPrice: i.price,
         qty: i.quantity,           // Backend espera 'qty' no 'quantity'
       })),
-      totals: { subtotal, shipping, total },
     };
 
     try {
