@@ -21,7 +21,7 @@ export function useRutas(fecha: string, vendedorId: number, enabled = true) {
     queryKey: ["rutas", fecha, vendedorId],
     queryFn: ({ signal }) =>
       rutaApi
-        .get("/api/ruta", { params: { fecha, vendedor_id: vendedorId }, signal })
+        .get(`/visita/${fecha}`, { signal })
         .then((r) => r.data),
     enabled: enabled && !!fecha && !!vendedorId,
     staleTime: 5 * 60 * 1000,

@@ -37,7 +37,7 @@ export function useCreateOrder() {
         }))
       };
       
-      const res = await ordersApi.post("/orders", formattedPayload, {
+      const res = await ordersApi.post("", formattedPayload, {
         headers: { "Idempotency-Key": idempotencyKey },
       });
       return res.data;
