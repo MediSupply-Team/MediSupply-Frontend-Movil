@@ -4,12 +4,28 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:local": "cross-env EXPO_PUBLIC_ENVIRONMENT=local expo start",
+    "start:aws": "cross-env EXPO_PUBLIC_ENVIRONMENT=aws expo start",
+    "start:prod": "cross-env EXPO_PUBLIC_ENVIRONMENT=production expo start",
+    "start:prod-test": "EXPO_PUBLIC_ENVIRONMENT=production expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
+    "android:dev": "expo start --android",
+    "android:aws": "cross-env EXPO_PUBLIC_ENVIRONMENT=aws expo start --android",
+    "android:local": "cross-env EXPO_PUBLIC_ENVIRONMENT=local expo start --android",
+    "android:prod": "cross-env EXPO_PUBLIC_ENVIRONMENT=production expo start --android",
     "ios": "expo run:ios",
+    "ios:dev": "expo start --ios",
+    "ios:aws": "cross-env EXPO_PUBLIC_ENVIRONMENT=aws expo start --ios",
+    "ios:local": "cross-env EXPO_PUBLIC_ENVIRONMENT=local expo start --ios",
+    "ios:prod": "cross-env EXPO_PUBLIC_ENVIRONMENT=production expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "jest"
+    "test": "jest",
+    "test-endpoints": "node scripts/test-endpoints.js",
+    "test-endpoints:local": "node scripts/test-endpoints.js local",
+    "test-endpoints:aws": "node scripts/test-endpoints.js aws",
+    "test-endpoints:prod": "node scripts/test-endpoints.js production"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -36,10 +52,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
     "react-native-gesture-handler": "~2.28.0",
-<<<<<<< HEAD
-=======
     "react-native-get-random-values": "^1.11.0",
->>>>>>> 086248f75cb000158f0dbca5b406275ce05315be
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "~4.16.0",
@@ -54,12 +67,13 @@
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "jest": "^29.7.0",
     "jest-expo": "^54.0.12",
     "react-test-renderer": "19.1.0",
-    "babel-plugin-module-resolver": "^5.0.2",
     "eslint-import-resolver-babel-module": "^5.3.2",
     "eslint-plugin-import": "^2.32.0",
     "typescript": "~5.9.2"

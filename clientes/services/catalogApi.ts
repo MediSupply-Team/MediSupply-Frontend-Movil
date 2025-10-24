@@ -1,10 +1,10 @@
 import axios from "axios";
-import { apiHost } from "../config/baseUrl";
-
-const BASE = apiHost();
+import { getServiceUrl, getCurrentEnvironment } from "../config/baseUrl";
 
 export const catalogApi = axios.create({
-  baseURL: `${BASE}:3001/api/catalog`,
+  baseURL: getCurrentEnvironment() === 'local' 
+    ? `${getServiceUrl('catalog')}/api/catalog` 
+    : getServiceUrl('catalog'),
   timeout: 15000,
   headers: { "Content-Type": "application/json" },
 });

@@ -9,6 +9,20 @@ import type {
     ParamsListarClientes
 } from '../infrastructure/interfaces/cliente';
 import { clienteApi } from './api';
+import { getCurrentEnvironment } from '../config/baseUrl';
+
+// Función helper para obtener el path correcto según el ambiente
+function getClientePath(endpoint: string = ''): string {
+  const environment = getCurrentEnvironment();
+  
+  if (environment === 'local') {
+    // En local, usamos el path de Docker Compose
+    return `/api/cliente${endpoint}`;
+  } else {
+    // En AWS/Production, usamos el path del BFF
+    return `/api/v1/client${endpoint}`;
+  }
+}
 
 export class ClienteService {
   /**
@@ -22,8 +36,20 @@ export class ClienteService {
   /**
    * Obtiene la lista de todos los clientes con filtros opcionales
    */
+  static async testConnection(): Promise<boolean> {
+    try {
+      const response = await clienteApi.get('/health');
+      return response.status === 200;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Obtiene la lista de todos los clientes con filtros opcionales
+   */
   static async listarClientes(params?: ParamsListarClientes): Promise<Cliente[]> {
-    const response = await clienteApi.get('/api/cliente/', { params });
+    const response = await clienteApi.get(getClientePath('/'), { params });
     return response.data;
   }
 
@@ -31,7 +57,7 @@ export class ClienteService {
    * Busca clientes por query (requiere vendedor_id)
    */
   static async buscarClientes(params: ParamsBuscarCliente): Promise<Cliente[]> {
-    const response = await clienteApi.get('/api/cliente/search', { params });
+    const response = await clienteApi.get(getClientePath('/search'), { params });
     
     // Asegurar que siempre devolvemos un array
     const data = response.data || [];
@@ -42,7 +68,7 @@ export class ClienteService {
    * Obtiene el detalle de un cliente específico
    */
   static async obtenerCliente(clienteId: string): Promise<Cliente> {
-    const response = await clienteApi.get(`/api/cliente/${clienteId}`);
+    const response = await clienteApi.get(getClientePath(`/${clienteId}`));
     return response.data;
   }
 
