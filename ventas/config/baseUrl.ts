@@ -1,5 +1,6 @@
 // config/baseUrl.ts
 import { Platform } from "react-native";
+import { isAPKMode } from './apkSimulation';
 
 // Tipos de ambientes disponibles
 export type Environment = 'local' | 'aws' | 'production';
@@ -17,8 +18,8 @@ const ENVIRONMENTS = {
   },
   aws: {
     // AWS - Endpoints desplegados (desde la guía)
-    bffVenta: "http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com",
-    bffCliente: "http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com",
+    bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
+    bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
     ordersService: "", // Se usa a través del BFF
     clienteService: "", // Se usa a través del BFF  
     catalogService: "", // Se usa a través del BFF
@@ -26,8 +27,8 @@ const ENVIRONMENTS = {
   },
   production: {
     // Producción (mismo que AWS por ahora)
-    bffVenta: "http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com",
-    bffCliente: "http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com",
+    bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
+    bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
     ordersService: "",
     clienteService: "",  
     catalogService: "",
@@ -37,22 +38,28 @@ const ENVIRONMENTS = {
 
 // Función para obtener el ambiente actual
 export function getCurrentEnvironment(): Environment {
-  // 1. Variable de entorno tiene prioridad máxima
+  // 1. Variable de entorno explícita
   const envVar = process.env.EXPO_PUBLIC_ENVIRONMENT as Environment;
   if (envVar && ['local', 'aws', 'production'].includes(envVar)) {
+    console.log(`Environment from var: ${envVar}`);
     return envVar;
   }
   
-  // 2. Si estamos en modo producción (APK compilado)
-  if (!__DEV__) {
+  // 2. APK compilado O simulación APK - FORZAR producción
+  if (isAPKMode()) {
+    console.log(`APK mode detected (real or simulated) - using PRODUCTION`);
+    console.log(`Platform: ${Platform.OS}`);
+    console.log(`__DEV__: ${__DEV__}`);
+    console.log(`isAPKMode(): ${isAPKMode()}`);
     return 'production';
   }
   
-  // 3. Default para desarrollo
+  // 3. Modo desarrollo
+  console.log(`Development mode - using LOCAL`);
   return 'local';
 }
 
-// Función para obtener el host base adaptado para emuladores/dispositivos
+// Función para obtener el host base adaptado para emuladores/dispositivos  
 export function apiHost() {
   const environment = getCurrentEnvironment();
   
@@ -66,7 +73,7 @@ export function apiHost() {
   } else {
     // Para AWS/producción, usamos las URLs directas de la guía
     const config = ENVIRONMENTS[environment];
-    return config.bffVenta; // BFF Venta como entrada principal
+    return config.bffCliente; // BFF Cliente como entrada principal para app clientes
   }
 }
 
@@ -85,64 +92,53 @@ export function getServiceUrl(service: 'orders' | 'cliente' | 'catalog' | 'rutas
       rutas: '8003'      // Rutas Service
     };
     
-    // Para local, solo devolvemos la URL base del servicio
-    // Los paths específicos los maneja cada servicio individualmente
     return `${base}:${ports[service]}`;
   } else {
     // AWS/Producción: todo a través de los BFFs (según la guía)
     const paths = {
       orders: '/api/v1/orders',      // BFF maneja órdenes
-      cliente: '',                   // BFF Cliente - base URL solamente
-      catalog: '/api/v1/catalog',    // BFF Venta proxy a catálogo  
+      cliente: '/api/v1/client/',      // BFF Cliente maneja clientes (con / final)
+      catalog: '/api/v1/catalog',           // BFF Venta proxy a catálogo
       rutas: '/api/v1/rutas'        // BFF Venta maneja rutas
     };
     
-    // Para AWS, usamos diferentes BFFs según el servicio (como indica la guía)
-    if (service === 'cliente') {
-      return `${config.bffCliente}${paths[service]}`;
-    } else {
-      // orders, catalog, rutas van por BFF Venta
+    // Para clientes, la mayoría van por BFF Cliente, excepto catálogo que va por BFF Venta
+    if (service === 'catalog' || service === 'rutas') {
       return `${config.bffVenta}${paths[service]}`;
+    } else {
+      // orders, cliente van por BFF Cliente
+      return `${config.bffCliente}${paths[service]}`;
     }
   }
 }
 
 // Helper para logs detallados
 export function logEnvironmentInfo() {
-  const env = getCurrentEnvironment();
-  
-  console.log(`
-🔧 MEDISUPPLY - CONFIGURACIÓN DE AMBIENTE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌍 Ambiente: ${env.toUpperCase()}
-📱 Plataforma: ${Platform.OS}
-🔗 Base URL: ${apiHost()}
-${env === 'aws' ? '☁️  Usando endpoints AWS desplegados' : ''}
-${env === 'local' ? '🐳 Usando Docker Compose local' : ''}
-${env === 'production' ? '🚀 Modo producción' : ''}
-
-📋 Servicios configurados:
-  • Orders: ${getServiceUrl('orders')}
-  • Cliente: ${getServiceUrl('cliente')}  
-  • Catálogo: ${getServiceUrl('catalog')}
-  • Rutas: ${getServiceUrl('rutas')}
-
-💡 Para cambiar ambiente en desarrollo:
-   export EXPO_PUBLIC_ENVIRONMENT=aws
-   npm run start:aws
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  `);
-}
-
-// Función de testing de conectividad
-export async function testConnectivity() {
   const environment = getCurrentEnvironment();
-  console.log(`🧪 Probando conectividad en ambiente: ${environment}`);
+  const isAPK = !__DEV__;
   
-  const services = ['orders', 'cliente', 'catalog', 'rutas'] as const;
+  console.log('🔧 MEDISUPPLY - CONFIGURACIÓN DE AMBIENTE');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log(`🌍 Ambiente: ${environment.toUpperCase()}`);
+  console.log(`📱 Plataforma: ${Platform.OS}`);
+  console.log(`� Modo: ${isAPK ? 'APK/Producción' : 'Desarrollo'}`);
+  console.log(`�🔗 Base URL: ${apiHost()}`);
+  console.log(`🔧 __DEV__: ${__DEV__}`);
   
-  for (const service of services) {
-    const url = getServiceUrl(service);
-    console.log(`🔍 Testing ${service}: ${url}`);
+  if (environment === 'production' || environment === 'aws') {
+    console.log('\n🚀 Modo producción/AWS');
+  } else {
+    console.log('\n🐳 Usando Docker Compose local');
   }
+  
+  console.log('\n📋 Servicios configurados:');
+  console.log(`  • Orders: ${getServiceUrl('orders')}`);
+  console.log(`  • Cliente: ${getServiceUrl('cliente')}`);  
+  console.log(`  • Catálogo: ${getServiceUrl('catalog')}`);
+  console.log(`  • Rutas: ${getServiceUrl('rutas')}`);
+  
+  console.log('\n💡 Para cambiar ambiente en desarrollo:');
+  console.log('   export EXPO_PUBLIC_ENVIRONMENT=aws');
+  console.log('   npm run start:aws');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 }

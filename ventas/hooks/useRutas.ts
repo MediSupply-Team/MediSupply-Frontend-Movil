@@ -16,14 +16,14 @@ export type Visita = {
 
 export type RutaResponse = { fecha: string; visitas: Visita[] };
 
-export function useRutas(fecha: string, vendedorId: number, enabled = true) {
+export function useRutas(fecha: string, enabled = true) {
   return useQuery<RutaResponse>({
-    queryKey: ["rutas", fecha, vendedorId],
+    queryKey: ["rutas", fecha],
     queryFn: ({ signal }) =>
       rutaApi
         .get(`/visita/${fecha}`, { signal })
         .then((r) => r.data),
-    enabled: enabled && !!fecha && !!vendedorId,
+    enabled: enabled && !!fecha,
     staleTime: 5 * 60 * 1000,
     retry: (count, err: any) => {
       const status = err?.response?.status;

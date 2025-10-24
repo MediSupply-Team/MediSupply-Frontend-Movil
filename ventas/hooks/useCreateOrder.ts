@@ -25,24 +25,24 @@ export function useCreateOrder() {
         // Generar un ID simple para idempotencia
         const idempotencyKey = `order-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         
-        // Formatear payload según el esquema del orders-service
-        const formattedPayload = {
-          customer_id: payload.customer_id,
-          created_by_role: "vendedor",
-          source: "mobile-ventas",
-          items: payload.items.map(item => ({
-            sku: item.sku,
-            qty: item.qty
-          }))
+        // Formatear payload según el esquema del BFF (con wrapper "body")
+        const bffPayload = {
+          body: {
+            customer_id: payload.customer_id,
+            items: payload.items.map(item => ({
+              sku: item.sku,
+              qty: item.qty
+            }))
+          }
         };
         
         console.log("🚀 [CREATE ORDER] Iniciando petición...");
         console.log("📦 [CREATE ORDER] Payload original:", JSON.stringify(payload, null, 2));
-        console.log("📋 [CREATE ORDER] Payload formateado:", JSON.stringify(formattedPayload, null, 2));
+        console.log("📋 [CREATE ORDER] BFF Payload (con body wrapper):", JSON.stringify(bffPayload, null, 2));
         console.log("🔑 [CREATE ORDER] Idempotency Key:", idempotencyKey);
         console.log("🌐 [CREATE ORDER] URL base:", ordersApi.defaults.baseURL);
         
-        const res = await ordersApi.post("", formattedPayload, {
+        const res = await ordersApi.post("", bffPayload, {
           headers: { "Idempotency-Key": idempotencyKey },
         });
         

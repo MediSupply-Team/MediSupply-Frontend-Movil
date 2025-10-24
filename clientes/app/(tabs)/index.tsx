@@ -2,7 +2,7 @@ import { useCartStore } from '@/store/cartStore';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -16,12 +16,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCatalogProducts, useProductsByCategory, useSearchProducts } from '@/hooks/useCatalog';
 import { CATEGORIAS, type CategoriaId, type ProductoCatalogo } from '@/types/catalog';
+import { testCatalogDirectly } from '@/utils/testCatalog';
+import { APKDebugger } from '@/components/APKDebugger';
 
 export default function CatalogoScreen() {
-  const { addItem, getTotalItems } = useCartStore();
+  const { addItem } = useCartStore();
+  const totalItems = useCartStore((state) => state.getTotalItems());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoriaId | ''>('');
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+
+  // Test directo del catálogo al abrir la pantalla
+  useEffect(() => {
+    console.log('🔧 [SCREEN] CatalogoScreen mounted, testing direct catalog...');
+    testCatalogDirectly().then(() => {
+      console.log('🎉 [SCREEN] Direct catalog test completed successfully');
+    }).catch((error) => {
+      console.error('💥 [SCREEN] Direct catalog test failed:', error);
+    });
+  }, []);
 
   // Hooks del catálogo (todos se ejecutan siempre)
   const catalogQuery = useCatalogProducts();
@@ -100,9 +113,11 @@ export default function CatalogoScreen() {
             <TouchableOpacity className="p-2" onPress={navigateToCart}>
               <Ionicons name="cart-outline" size={24} color="#1193d4" />
             </TouchableOpacity>
-            <View className="absolute -top-1 -right-1 bg-primary rounded-full h-5 w-5 items-center justify-center">
-              <Text className="text-xs font-bold text-white">{getTotalItems()}</Text>
-            </View>
+            {totalItems > 0 && (
+              <View className="absolute -top-1 -right-1 bg-primary rounded-full h-5 w-5 items-center justify-center">
+                <Text className="text-xs font-bold text-white">{totalItems}</Text>
+              </View>
+            )}
           </View>
         </View>
         
@@ -154,11 +169,19 @@ export default function CatalogoScreen() {
 
         {/* Products Section */}
         <View className="px-4 pb-20">
-          <Text className="text-lg font-bold text-gray-800 mb-3">
-            {searchQuery ? `Resultados para "${searchQuery}"` : 
-             selectedCategory ? `Categoría: ${categories.find(c => c.id === selectedCategory)?.name}` : 
-             'Productos Destacados'}
-          </Text>
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-lg font-bold text-gray-800">
+              {searchQuery ? `Resultados para "${searchQuery}"` : 
+               selectedCategory ? `Categoría: ${categories.find(c => c.id === selectedCategory)?.name}` : 
+               'Productos Destacados'}
+            </Text>
+            <TouchableOpacity 
+              className="bg-green-500 px-3 py-1 rounded"
+              onPress={() => testCatalogDirectly()}
+            >
+              <Text className="text-white text-xs">Test API</Text>
+            </TouchableOpacity>
+          </View>
           
           {/* Loading State */}
           {isLoading && (
@@ -307,6 +330,9 @@ export default function CatalogoScreen() {
           )}
         </View>
       </ScrollView>
+      
+      {/* APK Debugger */}
+      <APKDebugger />
     </SafeAreaView>
   );
 }
