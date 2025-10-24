@@ -1,11 +1,12 @@
 // src/services/api.ts
 import axios from "axios";
-import { apiHost } from "../config/baseUrl";
+import { getServiceUrl, logEnvironmentInfo } from "../config/baseUrl";
 
-const BASE = apiHost();
+// Log de configuración al inicializar
+logEnvironmentInfo();
 
 export const ordersApi = axios.create({
-  baseURL: `${BASE}:3000`,
+  baseURL: getServiceUrl('orders'),
   timeout: 15000,
   headers: { "Content-Type": "application/json" },
 });

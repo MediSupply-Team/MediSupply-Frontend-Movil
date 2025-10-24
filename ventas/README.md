@@ -1,50 +1,190 @@
-# Welcome to your Expo app 👋
+# Ventas App - MediSupply 🏥
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App móvil para el equipo de ventas de MediSupply.
 
-## Get started
+## 🚀 Inicio Rápido
 
-1. Install dependencies
-
+1. **Instalar dependencias**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. **Verificar conectividad** (opcional)
    ```bash
-   npx expo start
+   npm run test-endpoints
    ```
 
-In the output, you'll find options to open the app in a
+3. **Ejecutar la app**
+   ```bash
+   # Ambiente local (Docker)
+   npm run start:local
+   
+   # Ambiente AWS (desarrollo)
+   npm run start:aws
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🌍 Configuración de Ambientes
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Esta app puede conectarse a diferentes ambientes de backend:
 
-## Get a fresh project
-
-When you're ready, run:
-
+### Ambiente Local (Docker Compose)
 ```bash
-npm run reset-project
+# Verificar conectividad
+npm run test-endpoints:local
+
+# Ejecutar con Docker local
+npm run start:local
+npm run android:local
+npm run ios:local
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Ambiente AWS (Desarrollo)
+```bash
+# Verificar conectividad AWS
+npm run test-endpoints:aws
 
-## Learn more
+# Ejecutar con endpoints AWS
+npm run start:aws
+npm run android:aws
+npm run ios:aws
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### Ambiente Producción
+```bash
+# Verificar conectividad de producción
+npm run test-endpoints:prod
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Ejecutar con endpoints de producción
+npm run start:prod
+npm run android:prod
+npm run ios:prod
+```
 
-## Join the community
+### Testing de Endpoints
+```bash
+# Test todos los ambientes
+npm run test-endpoints
 
-Join our community of developers creating universal apps.
+# Test ambiente específico
+npm run test-endpoints:local
+npm run test-endpoints:aws
+npm run test-endpoints:prod
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🔧 Configuración Manual
+
+Si necesitas cambiar manualmente el ambiente:
+
+```bash
+# Para AWS
+export EXPO_PUBLIC_ENVIRONMENT=aws
+expo start
+
+# Para Producción
+export EXPO_PUBLIC_ENVIRONMENT=production
+expo start
+
+# Para Local
+export EXPO_PUBLIC_ENVIRONMENT=local
+expo start
+
+# Por defecto (Local)
+expo start
+```
+
+## 📋 URLs Configuradas
+
+### Local (Docker Compose)
+- BFF Venta: `http://localhost:8001`
+- Orders Service: `http://localhost:8000`
+- Catalog Service: `http://localhost:3001`
+- Cliente Service: `http://localhost:3003`
+- Rutas Service: `http://localhost:8003`
+
+### AWS (Desarrollo)
+- BFF Venta: `http://medisupply-dev-bff-venta-alb-1773752444.us-east-1.elb.amazonaws.com`
+- BFF Cliente: `http://medisupply-dev-bff-cliente-alb-1141787956.us-east-1.elb.amazonaws.com`
+
+Ver `config/baseUrl.ts` para detalles completos.
+
+## 🏗️ Estructura del Proyecto
+
+- `/app` - Pantallas principales (tabs, rutas, pedidos)
+- `/components` - Componentes reutilizables
+- `/hooks` - Custom hooks (useClientes, useRutas, useCreateOrder)
+- `/services` - Servicios API
+- `/store` - Estado global (Zustand)
+- `/config` - Configuración de ambientes
+
+## 🎨 Tema de Colores
+
+- Color primario: `#ea2a33` (rojo ventas)
+- Sistema de colores definido en `constants/theme.ts`
+
+## 📱 Funcionalidades
+
+- ✅ Gestión de clientes
+- ✅ Planificación de rutas
+- ✅ Catálogo de productos (pedidos)
+- ✅ Carrito de compras
+- ✅ Creación de pedidos
+- ✅ Cambio de ambientes
+- ✅ Logging y debugging
+
+## 🔍 Debugging
+
+La app incluye logging detallado para debugging:
+
+```bash
+# Ver logs del ambiente actual
+npm run start:local
+# Los logs aparecen en la consola de Expo
+
+# Test de conectividad
+npm run test-endpoints:aws
+```
+
+## 🧪 Testing
+
+```bash
+# Ejecutar tests unitarios
+npm test
+
+# Tests con coverage
+npm run test:coverage
+```
+
+## 🚢 Deploy
+
+### Para APK de Desarrollo (AWS)
+```bash
+# Configurar ambiente
+export EXPO_PUBLIC_ENVIRONMENT=aws
+
+# Compilar
+expo build:android
+# o
+eas build --platform android
+```
+
+### Para APK de Producción
+```bash
+# Configurar ambiente de producción
+export EXPO_PUBLIC_ENVIRONMENT=production
+
+# Verificar conectividad primero
+npm run test-endpoints:prod
+
+# Compilar para producción
+expo build:android --release-channel production
+# o
+eas build --platform android --profile production
+```
+
+### Comandos Rápidos para Producción
+```bash
+# Solo testing (sin compilar)
+npm run start:prod          # Expo con endpoints de producción
+npm run android:prod        # Android con endpoints de producción  
+npm run ios:prod            # iOS con endpoints de producción
+```

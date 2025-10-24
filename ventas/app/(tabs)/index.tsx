@@ -22,9 +22,7 @@ export default function ClientesScreen() {
     error, 
     refetch,
     isRefetching 
-  } = useClientes({ 
-    activos_solo: showActiveOnly 
-  });
+  } = useClientes(); // Sin parámetros - el backend devuelve todos los clientes por defecto
 
   // Hook para búsqueda de clientes
   const { 
@@ -41,31 +39,40 @@ export default function ClientesScreen() {
   // Determinar qué datos mostrar
   const datosAMostrar = useMemo(() => {
     if (!searchText.trim()) {
-      return clientes || [];
+      // Sin búsqueda: aplicar filtro de activos del lado del cliente
+      const clientesBase = clientes || [];
+      return showActiveOnly 
+        ? clientesBase.filter(cliente => cliente.activo)
+        : clientesBase;
     }
 
     const resultadosBusqueda = clientesBusqueda || [];
 
     // Si hay resultados de búsqueda remota y no hay error, usarlos
     if (resultadosBusqueda && resultadosBusqueda.length > 0 && !isErrorBusqueda) {
-      return resultadosBusqueda;
+      return showActiveOnly 
+        ? resultadosBusqueda.filter(cliente => cliente.activo)
+        : resultadosBusqueda;
     }
 
     // Si la búsqueda remota no devolvió resultados o falló, usar búsqueda local
     const clientesBase = clientes || [];
     const filtrados = clientesBase.filter(cliente => {
       const texto = searchText.toLowerCase();
-      return (
+      const matchesSearch = (
         cliente.nombre?.toLowerCase().includes(texto) ||
         cliente.nit?.toLowerCase().includes(texto) ||
         cliente.codigo_unico?.toLowerCase().includes(texto) ||
         cliente.email?.toLowerCase().includes(texto) ||
         cliente.ciudad?.toLowerCase().includes(texto)
       );
+      
+      // Aplicar también el filtro de activos
+      return matchesSearch && (showActiveOnly ? cliente.activo : true);
     });
     
     return filtrados;
-  }, [searchText, clientesBusqueda, isErrorBusqueda, clientes]);
+  }, [searchText, clientesBusqueda, isErrorBusqueda, clientes, showActiveOnly]);
 
   const getInitials = (nombre: string): string => {
     return nombre

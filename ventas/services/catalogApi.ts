@@ -1,11 +1,9 @@
 import axios from 'axios';
-import { apiHost } from '@/config/baseUrl';
-
-const BASE = apiHost();
+import { getServiceUrl } from '@/config/baseUrl';
 
 // Instancia específica para el catálogo de productos
 export const catalogApi = axios.create({
-  baseURL: `${BASE}:3001/api/catalog`, // Usar el mismo puerto y ruta que la app de clientes
+  baseURL: getServiceUrl('catalog'),
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
@@ -14,7 +12,7 @@ export const catalogApi = axios.create({
 
 // Instancia para órdenes/pedidos
 export const ordersApi = axios.create({
-  baseURL: `${BASE}:3000`, // Puerto para órdenes
+  baseURL: getServiceUrl('orders'),
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
