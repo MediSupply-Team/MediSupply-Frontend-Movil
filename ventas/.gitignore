@@ -46,4 +46,9 @@ app-example
 .vscode/
 .history/
 ui-mocks/
+
+# Coverage
+/coverage
+
+.npmrc
 CLIENTE_API_INTEGRATION.md

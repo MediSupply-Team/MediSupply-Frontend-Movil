@@ -20,7 +20,8 @@ import { testCatalogDirectly } from '@/utils/testCatalog';
 import { APKDebugger } from '@/components/APKDebugger';
 
 export default function CatalogoScreen() {
-  const { addItem, getTotalItems } = useCartStore();
+  const { addItem } = useCartStore();
+  const totalItems = useCartStore((state) => state.getTotalItems());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoriaId | ''>('');
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
@@ -112,9 +113,11 @@ export default function CatalogoScreen() {
             <TouchableOpacity className="p-2" onPress={navigateToCart}>
               <Ionicons name="cart-outline" size={24} color="#1193d4" />
             </TouchableOpacity>
-            <View className="absolute -top-1 -right-1 bg-primary rounded-full h-5 w-5 items-center justify-center">
-              <Text className="text-xs font-bold text-white">{getTotalItems()}</Text>
-            </View>
+            {totalItems > 0 && (
+              <View className="absolute -top-1 -right-1 bg-primary rounded-full h-5 w-5 items-center justify-center">
+                <Text className="text-xs font-bold text-white">{totalItems}</Text>
+              </View>
+            )}
           </View>
         </View>
         

@@ -21,12 +21,15 @@
     "ios:prod": "cross-env EXPO_PUBLIC_ENVIRONMENT=production expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
+    "test": "jest",
     "test-endpoints": "node scripts/test-endpoints.js",
     "test-endpoints:local": "node scripts/test-endpoints.js local",
     "test-endpoints:aws": "node scripts/test-endpoints.js aws",
     "test-endpoints:prod": "node scripts/test-endpoints.js production",
     "debug-network": "node scripts/debug-network.js",
-    "test-apk": "node scripts/test-apk-endpoints.js"
+    "test-apk": "node scripts/test-apk-endpoints.js",
+    "test-cart": "node scripts/test-cart-state.js",
+    "test-orders": "node scripts/test-orders-bff.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -65,11 +68,17 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "cross-env": "^10.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "jest": "^29.7.0",
+    "jest-expo": "^54.0.12",
+    "react-test-renderer": "19.1.0",
     "eslint-import-resolver-babel-module": "^5.3.2",
     "eslint-plugin-import": "^2.32.0",
     "typescript": "~5.9.2"

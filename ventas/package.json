@@ -25,7 +25,9 @@
     "test-endpoints:aws": "node scripts/test-endpoints.js aws",
     "test-endpoints:prod": "node scripts/test-endpoints.js production",
     "debug-network": "node scripts/debug-network.js",
-    "test-apk": "node scripts/test-apk-endpoints.js"
+    "test-apk": "node scripts/test-apk-endpoints.js",
+    "test-rutas": "node scripts/test-rutas.js",
+    "test-orders": "node scripts/test-orders-bff.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -55,7 +57,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
     "react-native-gesture-handler": "~2.28.0",
-    "react-native-maps": "1.20.1",
+    "react-native-maps": "^1.20.1",
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",

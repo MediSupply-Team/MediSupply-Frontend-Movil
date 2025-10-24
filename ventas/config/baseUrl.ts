@@ -17,7 +17,7 @@ const ENVIRONMENTS = {
     rutasService: "http://localhost:8003",
   },
   aws: {
-    // AWS - Endpoints desplegados con HTTPS CloudFront
+    // AWS - Endpoints desplegados (desde la guía)
     bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
     bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
     ordersService: "", // Se usa a través del BFF
@@ -26,7 +26,7 @@ const ENVIRONMENTS = {
     rutasService: "", // Se usa a través del BFF
   },
   production: {
-    // Producción - HTTPS CloudFront URLs
+    // Producción (mismo que AWS por ahora)
     bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
     bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
     ordersService: "",

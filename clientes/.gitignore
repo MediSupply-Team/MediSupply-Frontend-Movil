@@ -45,4 +45,6 @@ app-example
 # VS Code
 .vscode/
 .history/
+
+.npmrc
 ui-mocks/
