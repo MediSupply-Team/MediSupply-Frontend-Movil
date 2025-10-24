@@ -2,12 +2,15 @@
 
 const axios = require('axios');
 
-// URLs EXACTAS que funcionan (confirmadas por el usuario)
+// URLs EXACTAS con HTTPS CloudFront (actualizadas)
 const WORKING_ENDPOINTS = {
-  catalog: 'http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com/api/v1/catalog/items',
-  client: 'http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com/api/v1/client/',
-  health_venta: 'http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com/health',
-  health_cliente: 'http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com/health'
+  catalog: 'https://d3f7r5jd3xated.cloudfront.net/api/v1/catalog/items',
+  client: 'https://d2daixtzj6x1qi.cloudfront.net/api/v1/client/',
+  health_venta: 'https://d3f7r5jd3xated.cloudfront.net/health',
+  health_cliente: 'https://d2daixtzj6x1qi.cloudfront.net/health',
+  // También mantener las HTTP para comparar
+  catalog_http: 'http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com/api/v1/catalog/items',
+  client_http: 'http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com/api/v1/client/'
 };
 
 const APK_HEADERS = {
