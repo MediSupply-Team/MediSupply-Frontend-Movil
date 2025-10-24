@@ -1,22 +1,19 @@
 import axios from 'axios';
 import { getServiceUrl } from '@/config/baseUrl';
+import { getAPKHeaders, getAPKTimeout } from '../config/apkSimulation';
 
 // Instancia específica para el catálogo de productos
 export const catalogApi = axios.create({
   baseURL: getServiceUrl('catalog'),
-  timeout: 15000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  timeout: getAPKTimeout(),
+  headers: getAPKHeaders(),
 });
 
 // Instancia para órdenes/pedidos
 export const ordersApi = axios.create({
   baseURL: getServiceUrl('orders'),
-  timeout: 15000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  timeout: getAPKTimeout(),
+  headers: getAPKHeaders(),
 });
 
 // Interceptors para logging detallado
