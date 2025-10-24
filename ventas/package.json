@@ -23,7 +23,9 @@
     "test-endpoints": "node scripts/test-endpoints.js",
     "test-endpoints:local": "node scripts/test-endpoints.js local",
     "test-endpoints:aws": "node scripts/test-endpoints.js aws",
-    "test-endpoints:prod": "node scripts/test-endpoints.js production"
+    "test-endpoints:prod": "node scripts/test-endpoints.js production",
+    "test-rutas": "node scripts/test-rutas.js",
+    "test-orders": "node scripts/test-orders-bff.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
