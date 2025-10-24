@@ -11,13 +11,13 @@ const ENVIRONMENTS = {
     rutasService: 'http://localhost:8003',
   },
   aws: {
-    bffVenta: 'http://medisupply-dev-bff-venta-alb-1773752444.us-east-1.elb.amazonaws.com',
-    bffCliente: 'http://medisupply-dev-bff-cliente-alb-1141787956.us-east-1.elb.amazonaws.com',
+    bffVenta: 'http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com',
+    bffCliente: 'http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com',
   },
   production: {
-    // Producción - usando mismo ALB por ahora (configurable)
-    bffVenta: 'http://medisupply-dev-bff-venta-alb-1773752444.us-east-1.elb.amazonaws.com',
-    bffCliente: 'http://medisupply-dev-bff-cliente-alb-1141787956.us-east-1.elb.amazonaws.com',
+    // Producción - URLs actualizadas para APK
+    bffVenta: 'http://medisupply-dev-bff-venta-alb-607524362.us-east-1.elb.amazonaws.com',
+    bffCliente: 'http://medisupply-dev-bff-cliente-alb-1673122993.us-east-1.elb.amazonaws.com',
   }
 };
 

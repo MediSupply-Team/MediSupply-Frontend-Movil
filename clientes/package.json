@@ -26,11 +26,14 @@
     "test-endpoints:local": "node scripts/test-endpoints.js local",
     "test-endpoints:aws": "node scripts/test-endpoints.js aws",
     "test-endpoints:prod": "node scripts/test-endpoints.js production",
+    "debug-network": "node scripts/debug-network.js",
+    "test-apk": "node scripts/test-apk-endpoints.js",
     "test-cart": "node scripts/test-cart-state.js",
     "test-orders": "node scripts/test-orders-bff.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",

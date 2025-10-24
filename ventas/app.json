@@ -21,6 +21,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
+      "package": "com.julianrvillamil.ventas",
+      "networkSecurityConfig": "network_security_config",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBzSnY4trIq_3Wf6q5wfjP-FSgNt2nS3b8"

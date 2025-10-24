@@ -7,8 +7,12 @@ logEnvironmentInfo();
 
 export const rutaApi = axios.create({
   baseURL: getServiceUrl('rutas'),
-  timeout: 10000,
-  headers: { "Content-Type": "application/json" },
+  timeout: 30000, // Timeout aumentado para APK
+  headers: { 
+    "Content-Type": "application/json",
+    "User-Agent": "MediSupply-Ventas-APK/1.0",
+    "Accept": "application/json"
+  },
 });
 
 rutaApi.interceptors.request.use((config) => {
@@ -50,8 +54,12 @@ rutaApi.interceptors.response.use(
 
 export const clienteApi = axios.create({
   baseURL: getServiceUrl('cliente'),
-  timeout: 10000,
-  headers: { "Content-Type": "application/json" },
+  timeout: 30000, // Timeout aumentado para APK
+  headers: { 
+    "Content-Type": "application/json",
+    "User-Agent": "MediSupply-Ventas-APK/1.0",
+    "Accept": "application/json"
+  },
 });
 
 clienteApi.interceptors.request.use((config) => {
