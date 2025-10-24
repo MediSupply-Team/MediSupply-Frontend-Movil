@@ -42,7 +42,7 @@ export function useCreateOrder() {
         console.log("🔑 [CREATE ORDER] Idempotency Key:", idempotencyKey);
         console.log("🌐 [CREATE ORDER] URL base:", ordersApi.defaults.baseURL);
         
-        const res = await ordersApi.post("/orders", bffPayload, {
+        const res = await ordersApi.post("", bffPayload, {
           headers: { "Idempotency-Key": idempotencyKey },
         });
         

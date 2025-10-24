@@ -53,11 +53,11 @@ export function APKSimulator() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 50,
-    right: 10,
-    borderRadius: 8,
-    padding: 8,
-    minWidth: 80,
+    bottom: 20,  // Mover hacia abajo
+    left: 10,    // Mover hacia la izquierda
+    borderRadius: 6,
+    padding: 4,  // Menos padding
+    minWidth: 60, // Más pequeño
     zIndex: 1000,
   },
   button: {
@@ -65,18 +65,18 @@ const styles = StyleSheet.create({
   },
   modeText: {
     color: 'white',
-    fontSize: 12,
+    fontSize: 10,  // Más pequeño
     fontWeight: 'bold',
   },
   envText: {
     color: 'white',
-    fontSize: 10,
-    marginTop: 2,
+    fontSize: 8,   // Más pequeño
+    marginTop: 1,  // Menos margen
   },
   urlText: {
     color: 'white',
-    fontSize: 8,
-    marginTop: 2,
+    fontSize: 6,   // Mucho más pequeño
+    marginTop: 1,  // Menos margen
     textAlign: 'center',
   },
 });

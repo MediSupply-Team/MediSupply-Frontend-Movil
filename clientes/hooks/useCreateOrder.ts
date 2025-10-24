@@ -42,13 +42,13 @@ export function useCreateOrder() {
       console.log("📋 [CREATE ORDER CLIENTES] BFF Payload (con body wrapper):", JSON.stringify(bffPayload, null, 2));
       console.log("🔑 [CREATE ORDER CLIENTES] Idempotency Key:", idempotencyKey);
       console.log("🌐 [CREATE ORDER CLIENTES] URL base:", ordersApi.defaults.baseURL);
-      console.log("🎯 [CREATE ORDER CLIENTES] URL completa:", `${ordersApi.defaults.baseURL}/orders`);
+      console.log("🎯 [CREATE ORDER CLIENTES] URL completa:", `${ordersApi.defaults.baseURL}`);
       console.log("📋 [CREATE ORDER CLIENTES] Headers:", JSON.stringify({
         "Content-Type": "application/json",
         "Idempotency-Key": idempotencyKey
       }, null, 2));
       
-      const res = await ordersApi.post("/orders", bffPayload, {
+      const res = await ordersApi.post("", bffPayload, {
         headers: { 
           "Idempotency-Key": idempotencyKey,
           "Content-Type": "application/json",
