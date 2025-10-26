@@ -2,7 +2,7 @@ import { useCartStore } from '@/store/cartStore';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -17,7 +17,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCatalogProducts, useProductsByCategory, useSearchProducts } from '@/hooks/useCatalog';
 import { CATEGORIAS, type CategoriaId, type ProductoCatalogo } from '@/types/catalog';
 import { testCatalogDirectly } from '@/utils/testCatalog';
-import { APKDebugger } from '@/components/APKDebugger';
 
 export default function CatalogoScreen() {
   const { addItem } = useCartStore();
@@ -175,12 +174,12 @@ export default function CatalogoScreen() {
                selectedCategory ? `Categoría: ${categories.find(c => c.id === selectedCategory)?.name}` : 
                'Productos Destacados'}
             </Text>
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
               className="bg-green-500 px-3 py-1 rounded"
               onPress={() => testCatalogDirectly()}
             >
               <Text className="text-white text-xs">Test API</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           
           {/* Loading State */}
@@ -332,7 +331,7 @@ export default function CatalogoScreen() {
       </ScrollView>
       
       {/* APK Debugger */}
-      <APKDebugger />
+      {/* <APKDebugger /> */}
     </SafeAreaView>
   );
 }
