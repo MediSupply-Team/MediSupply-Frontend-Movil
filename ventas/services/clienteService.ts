@@ -1,15 +1,15 @@
 // services/clienteService.ts
+import { getCurrentEnvironment } from '../config/baseUrl';
 import type {
-    Cliente,
-    HealthStatus,
-    HistoricoCliente,
-    MetricasServicio,
-    ParamsBuscarCliente,
-    ParamsHistoricoCliente,
-    ParamsListarClientes
+  Cliente,
+  HealthStatus,
+  HistoricoCliente,
+  MetricasServicio,
+  ParamsBuscarCliente,
+  ParamsHistoricoCliente,
+  ParamsListarClientes
 } from '../infrastructure/interfaces/cliente';
 import { clienteApi } from './api';
-import { getCurrentEnvironment } from '../config/baseUrl';
 
 // Función helper para obtener el path correcto según el ambiente
 function getClientePath(endpoint: string = ''): string {
@@ -20,7 +20,7 @@ function getClientePath(endpoint: string = ''): string {
     return `/api/cliente${endpoint}`;
   } else {
     // En AWS/Production, usamos el path del BFF
-    return `/api/v1/client${endpoint}`;
+    return `${endpoint}`;
   }
 }
 
