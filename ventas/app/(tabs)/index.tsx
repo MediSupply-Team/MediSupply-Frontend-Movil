@@ -1,12 +1,11 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { FlatList, StatusBar, Text, TextInput, TouchableOpacity, View, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import '../../global.css';
-import { useBuscarClientes, useClientes } from '../../hooks/useClientes';
+import { useClientes, useBuscarClientes } from '../../hooks/useClientes';
 import type { Cliente } from '../../infrastructure/interfaces/cliente';
-import { APKDebugger } from '../../components/APKDebugger';
 
 // ID del vendedor - en una implementación real esto vendría del contexto de autenticación
 const VENDEDOR_ID = 'VEN001';
@@ -270,9 +269,6 @@ export default function ClientesScreen() {
           showsVerticalScrollIndicator={false}
         />
       </View>
-      
-      {/* APK Debugger */}
-      <APKDebugger />
     </SafeAreaView>
   );
 }
