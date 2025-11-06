@@ -18,8 +18,8 @@ const ENVIRONMENTS = {
   },
   aws: {
     // AWS - Endpoints desplegados (desde la guía)
-    bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
-    bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
+    bffVenta: "https://medisupply-backend.duckdns.org/venta",
+    bffCliente: "https://medisupply-backend.duckdns.org/cliente",
     ordersService: "", // Se usa a través del BFF
     clienteService: "", // Se usa a través del BFF  
     catalogService: "", // Se usa a través del BFF
@@ -27,8 +27,8 @@ const ENVIRONMENTS = {
   },
   production: {
     // Producción (mismo que AWS por ahora)
-    bffVenta: "https://d3f7r5jd3xated.cloudfront.net",
-    bffCliente: "https://d2daixtzj6x1qi.cloudfront.net",
+    bffVenta: "https://medisupply-backend.duckdns.org/venta",
+    bffCliente: "https://medisupply-backend.duckdns.org/cliente",
     ordersService: "",
     clienteService: "",  
     catalogService: "",
