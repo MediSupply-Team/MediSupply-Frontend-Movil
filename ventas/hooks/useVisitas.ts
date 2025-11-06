@@ -1,7 +1,7 @@
 // hooks/useVisitas.ts
 import { useMutation } from "@tanstack/react-query";
-import { VisitaService } from "../services/visitaService";
 import type { RegistrarVisitaRequest, VisitaResponse } from "../infrastructure/interfaces/visita";
+import { VisitaService } from "../services/visitaService";
 
 /**
  * Hook para registrar una nueva visita
