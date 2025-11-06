@@ -5,7 +5,7 @@ import type { Cliente } from '@/infrastructure/interfaces/cliente';
 import type { MediaFile } from '@/infrastructure/interfaces/visita';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
     ActivityIndicator,
@@ -177,9 +177,11 @@ export default function RegistrarVisitaScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Header */}
-      <View style={styles.header}>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView style={styles.container} edges={['top']}>
+        {/* Header */}
+        <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
           onPress={() => router.back()}
@@ -329,6 +331,7 @@ export default function RegistrarVisitaScreen() {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
+    </>
   );
 }
 
