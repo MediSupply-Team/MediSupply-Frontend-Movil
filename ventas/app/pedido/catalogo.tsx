@@ -19,10 +19,13 @@ import { CATEGORIAS, type CategoriaId, type ProductoCatalogo } from "@/types/cat
 
 export default function CatalogoVentasScreen() {
   const { clienteId } = useLocalSearchParams();
-  const { addItem, getTotalItems } = useCartStore();
+  const { addItem, items } = useCartStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoriaId | ''>('');
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+
+  // Calcular total de items desde el state directamente para que React lo observe
+  const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
   // Hooks del catálogo (todos se ejecutan siempre)
   const catalogQuery = useCatalogProducts();
@@ -105,7 +108,7 @@ export default function CatalogoVentasScreen() {
               <Ionicons name="cart-outline" size={24} color="#ea2a33" />
             </TouchableOpacity>
             <View className="absolute -top-1 -right-1 bg-primary-500 rounded-full h-5 w-5 items-center justify-center">
-              <Text className="text-xs font-bold text-white">{getTotalItems()}</Text>
+              <Text className="text-xs font-bold text-white">{totalItems}</Text>
             </View>
           </View>
         </View>

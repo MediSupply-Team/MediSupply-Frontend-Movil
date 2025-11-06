@@ -9,20 +9,13 @@ import { FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-na
 import MapView, { Marker } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const VISITAS = [
-  { id: '1', nombre: 'Clínica San Lucas', hora: '10:00 AM' },
-  { id: '2', nombre: 'Hospital Santa María', hora: '11:30 AM' },
-  { id: '3', nombre: 'Consultorio Dr. Ramírez', hora: '1:00 PM' },
-];
-
 export default function RutaScreen() {
   const { locationStatus, requestLocationPermission, checkLocationPermission } = usePermissionsStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
-  const VENDEDOR_ID = 1;
   const fechaISO = selectedDate.toISOString().slice(0, 10);
-  const { data, isLoading, isError, error, refetch, isRefetching } = useRutas(fechaISO, VENDEDOR_ID);
+  const { data, isLoading, isError, error, refetch, isRefetching } = useRutas(fechaISO);
 
   useEffect(() => {
     console.log('Location status:', locationStatus);
@@ -30,7 +23,7 @@ export default function RutaScreen() {
 
   useEffect(() => {
     refetch();
-  }, [selectedDate]);
+  }, [selectedDate, refetch]);
 
   const formatSelectedDate = () => {
     const options: Intl.DateTimeFormatOptions = { 
