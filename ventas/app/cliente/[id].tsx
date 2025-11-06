@@ -319,7 +319,16 @@ export default function ClienteDetalleScreen() {
       {/* Footer Actions */}
       <View style={styles.footer}>
         <View style={styles.footerActions}>
-          <TouchableOpacity style={styles.primaryButton}>
+          <TouchableOpacity 
+            style={styles.primaryButton}
+            onPress={() => router.push({
+              pathname: '/visita/registrar' as any,
+              params: { 
+                clienteId: cliente?.id?.toString() || clienteId, // Usar el ID numérico del cliente
+                clienteData: JSON.stringify(cliente)
+              }
+            })}
+          >
             <MaterialIcons name="add-comment" size={20} color="white" />
             <Text style={styles.primaryButtonText}>Registrar Visita</Text>
           </TouchableOpacity>
