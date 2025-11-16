@@ -1,8 +1,33 @@
 // services/visitaService.ts
 import axios from "axios";
-import type { RegistrarVisitaRequest, VisitaResponse } from "../infrastructure/interfaces/visita";
+import type { RegistrarVisitaRequest, VisitaResponse, VisitaListItem, VideoAnalysis, IniciarAnalisisResponse } from "../infrastructure/interfaces/visita";
+import { clienteApi } from "./api";
 
 export class VisitaService {
+  /**
+   * Obtiene la lista de todas las visitas
+   */
+  static async obtenerVisitas(): Promise<VisitaListItem[]> {
+    console.log("📦 [VisitaService] Obteniendo lista de visitas...");
+    
+    try {
+      const response = await axios.get('https://medisupply-backend.duckdns.org/cliente/api/visitas');
+      
+      console.log("✅ [VisitaService] Visitas obtenidas:", response.data.length);
+      return response.data;
+      
+    } catch (error: any) {
+      console.error("❌ [VisitaService] Error obteniendo visitas:", error);
+      
+      if (error.response) {
+        console.error("📡 Response status:", error.response.status);
+        console.error("📡 Response data:", error.response.data);
+      }
+      
+      throw error;
+    }
+  }
+
   /**
    * Registra una nueva visita usando multipart/form-data para archivos
    */
@@ -11,6 +36,7 @@ export class VisitaService {
     console.log(JSON.stringify(data, null, 2));
     
     try {
+      
       // Crear FormData para multipart/form-data
       const formData = new FormData();
       
@@ -91,6 +117,54 @@ export class VisitaService {
       return uri;
     } catch (error) {
       console.error('Error converting file to base64:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Inicia el análisis de videos de una visita
+   */
+  static async iniciarAnalisisVideos(visitaId: number): Promise<IniciarAnalisisResponse> {
+    console.log(`📦 [VisitaService] Iniciando análisis de videos para visita #${visitaId}...`);
+    
+    try {
+      const response = await axios.post(`https://medisupply-backend.duckdns.org/cliente/api/visitas/${visitaId}/analyze`);
+      
+      console.log("✅ [VisitaService] Análisis iniciado:", response.data);
+      return response.data;
+      
+    } catch (error: any) {
+      console.error("❌ [VisitaService] Error iniciando análisis:", error);
+      
+      if (error.response) {
+        console.error("📡 Response status:", error.response.status);
+        console.error("📡 Response data:", error.response.data);
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene los análisis de videos de una visita
+   */
+  static async obtenerAnalisisVideos(visitaId: number): Promise<VideoAnalysis[]> {
+    console.log(`📦 [VisitaService] Obteniendo análisis de videos para visita #${visitaId}...`);
+    
+    try {
+      const response = await axios.get(`https://medisupply-backend.duckdns.org/cliente/api/visitas/${visitaId}/video-analyses`);
+      
+      console.log("✅ [VisitaService] Análisis obtenidos:", response.data);
+      return response.data;
+      
+    } catch (error: any) {
+      console.error("❌ [VisitaService] Error obteniendo análisis:", error);
+      
+      if (error.response) {
+        console.error("📡 Response status:", error.response.status);
+        console.error("📡 Response data:", error.response.data);
+      }
+      
       throw error;
     }
   }

@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import '../../global.css';
 import { useBuscarClientes, useClientes } from '../../hooks/useClientes';
 import type { Cliente } from '../../infrastructure/interfaces/cliente';
+import { APKDebugger } from '@/components/APKDebugger';
 
 // ID del vendedor - en una implementación real esto vendría del contexto de autenticación
 const VENDEDOR_ID = 'VEN001';
@@ -269,6 +270,8 @@ export default function ClientesScreen() {
           showsVerticalScrollIndicator={false}
         />
       </View>
+       {/* APK Debugger */}
+      <APKDebugger />
     </SafeAreaView>
   );
 }

@@ -63,9 +63,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="videos"
         options={{
-          title: 'Videos',
+          title: 'Visitas',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="video-library" size={size || 24} color={color} />
+            <MaterialIcons name="assignment" size={size || 24} color={color} />
           ),
         }}
       />

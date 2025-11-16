@@ -97,7 +97,7 @@ export function getServiceUrl(service: 'orders' | 'cliente' | 'catalog' | 'rutas
     // AWS/Producción: todo a través de los BFFs (según la guía)
     const paths = {
       orders: '/api/v1/orders',      // BFF maneja órdenes
-      cliente: '/api/v1/client/',      // BFF Cliente maneja clientes (con / final)
+      cliente: '/api/v1/cliente/',      // BFF Cliente maneja clientes (con / final)
       catalog: '/api/v1/catalog',           // BFF Venta proxy a catálogo
       rutas: '/api/v1/rutas'        // BFF Venta maneja rutas
     };
