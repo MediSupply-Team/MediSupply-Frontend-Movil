@@ -1,6 +1,6 @@
 // hooks/useVisitas.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { RegistrarVisitaRequest, VisitaResponse, VisitaListItem, VideoAnalysis, IniciarAnalisisResponse } from "../infrastructure/interfaces/visita";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { IniciarAnalisisResponse, RegistrarVisitaRequest, VideoAnalysis, VisitaListItem, VisitaResponse } from "../infrastructure/interfaces/visita";
 import { VisitaService } from "../services/visitaService";
 
 /**

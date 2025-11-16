@@ -1,7 +1,6 @@
 // services/visitaService.ts
 import axios from "axios";
-import type { RegistrarVisitaRequest, VisitaResponse, VisitaListItem, VideoAnalysis, IniciarAnalisisResponse } from "../infrastructure/interfaces/visita";
-import { clienteApi } from "./api";
+import type { IniciarAnalisisResponse, RegistrarVisitaRequest, VideoAnalysis, VisitaListItem, VisitaResponse } from "../infrastructure/interfaces/visita";
 
 export class VisitaService {
   /**

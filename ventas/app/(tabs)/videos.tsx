@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Modal, ScrollView, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from '@/constants/theme';
-import { useVisitas, useIniciarAnalisisVideos, useObtenerAnalisisVideos } from '@/hooks/useVisitas';
-import type { VisitaListItem, VideoAnalysis } from '@/infrastructure/interfaces/visita';
+import { useIniciarAnalisisVideos, useObtenerAnalisisVideos, useVisitas } from '@/hooks/useVisitas';
+import type { VideoAnalysis, VisitaListItem } from '@/infrastructure/interfaces/visita';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, Modal, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function VisitasScreen() {
   const { data: visitas, isLoading, isError, error, refetch } = useVisitas();
