@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useCatalogProducts, useProductsByCategory, useSearchProducts } from "@/hooks/useCatalog";
+import { useCatalogWithWebSocket } from "@/hooks/useCatalogWithWebSocket";
 import { useCartStore } from "@/store/cartStore";
 import { CATEGORIAS, type CategoriaId, type ProductoCatalogo } from "@/types/catalog";
 
@@ -27,19 +27,18 @@ export default function CatalogoVentasScreen() {
   // Calcular total de items desde el state directamente para que React lo observe
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
-  // Hooks del catálogo (todos se ejecutan siempre)
-  const catalogQuery = useCatalogProducts();
-  const searchQuery_result = useSearchProducts(searchQuery, !!searchQuery);
-  const categoryQuery = useProductsByCategory(selectedCategory || 'ANTIBIOTICS', !!selectedCategory);
+  // Hook híbrido que usa HTTP + WebSocket
+  const {
+    data: catalogData,
+    isLoading,
+    error,
+    refetch
+  } = useCatalogWithWebSocket({
+    searchQuery,
+    category: selectedCategory,
+    useWebSocket: true // Habilitado para actualizaciones en tiempo real
+  });
 
-  // Determinamos qué datos usar basado en el estado actual
-  const activeQuery = useMemo(() => {
-    if (searchQuery) return searchQuery_result;
-    if (selectedCategory) return categoryQuery;
-    return catalogQuery;
-  }, [searchQuery, selectedCategory, searchQuery_result, categoryQuery, catalogQuery]);
-
-  const { data: catalogData, isLoading, error } = activeQuery;
   const productos = catalogData?.items || [];
 
   // Helper para obtener cantidad de un producto específico
@@ -181,7 +180,7 @@ export default function CatalogoVentasScreen() {
               <Text className="text-danger-500 mb-2">Error al cargar productos</Text>
               <TouchableOpacity 
                 className="bg-primary-500 px-4 py-2 rounded-lg"
-                onPress={() => activeQuery.refetch()}
+                onPress={() => refetch()}
               >
                 <Text className="text-white font-medium">Reintentar</Text>
               </TouchableOpacity>

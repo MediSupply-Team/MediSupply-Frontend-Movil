@@ -2,7 +2,7 @@ import { useCartStore } from '@/store/cartStore';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -14,9 +14,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useCatalogProducts, useProductsByCategory, useSearchProducts } from '@/hooks/useCatalog';
+import { useCatalogWithWebSocket } from '@/hooks/useCatalogWithWebSocket';
 import { CATEGORIAS, type CategoriaId, type ProductoCatalogo } from '@/types/catalog';
-import { testCatalogDirectly } from '@/utils/testCatalog';
 
 export default function CatalogoScreen() {
   const { addItem } = useCartStore();
@@ -25,29 +24,17 @@ export default function CatalogoScreen() {
   const [selectedCategory, setSelectedCategory] = useState<CategoriaId | ''>('');
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
-  // Test directo del catálogo al abrir la pantalla
-  useEffect(() => {
-    console.log('🔧 [SCREEN] CatalogoScreen mounted, testing direct catalog...');
-    testCatalogDirectly().then(() => {
-      console.log('🎉 [SCREEN] Direct catalog test completed successfully');
-    }).catch((error) => {
-      console.error('💥 [SCREEN] Direct catalog test failed:', error);
-    });
-  }, []);
-
-  // Hooks del catálogo (todos se ejecutan siempre)
-  const catalogQuery = useCatalogProducts();
-  const searchQuery_result = useSearchProducts(searchQuery, !!searchQuery);
-  const categoryQuery = useProductsByCategory(selectedCategory || 'ANTIBIOTICS', !!selectedCategory);
-
-  // Determinamos qué datos usar basado en el estado actual
-  const activeQuery = useMemo(() => {
-    if (searchQuery) return searchQuery_result;
-    if (selectedCategory) return categoryQuery;
-    return catalogQuery;
-  }, [searchQuery, selectedCategory, searchQuery_result, categoryQuery, catalogQuery]);
-
-  const { data: catalogData, isLoading, error } = activeQuery;
+  // Hook híbrido que usa HTTP + WebSocket
+  const {
+    data: catalogData,
+    isLoading,
+    error,
+    refetch
+  } = useCatalogWithWebSocket({
+    searchQuery,
+    category: selectedCategory,
+    useWebSocket: true // Habilitado para actualizaciones en tiempo real
+  });
   const productos = catalogData?.items || [];
 
   // Helper para obtener cantidad de un producto específico
@@ -196,7 +183,7 @@ export default function CatalogoScreen() {
               <Text className="text-red-500 mb-2">Error al cargar productos</Text>
               <TouchableOpacity 
                 className="bg-primary px-4 py-2 rounded-lg"
-                onPress={() => activeQuery.refetch()}
+                onPress={() => refetch()}
               >
                 <Text className="text-white font-medium">Reintentar</Text>
               </TouchableOpacity>
