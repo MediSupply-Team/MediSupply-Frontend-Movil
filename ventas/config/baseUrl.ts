@@ -102,11 +102,11 @@ export function getServiceUrl(service: 'orders' | 'cliente' | 'catalog' | 'rutas
       rutas: '/api/v1/rutas'        // BFF Venta maneja rutas
     };
     
-    // Para clientes, la mayoría van por BFF Cliente, excepto catálogo que va por BFF Venta
-    if (service === 'catalog' || service === 'rutas') {
+    // Para ventas: orders, catalog y rutas van por BFF Venta
+    if (service === 'orders' || service === 'catalog' || service === 'rutas') {
       return `${config.bffVenta}${paths[service]}`;
     } else {
-      // orders, cliente van por BFF Cliente
+      // cliente va por BFF Cliente
       return `${config.bffCliente}${paths[service]}`;
     }
   }
