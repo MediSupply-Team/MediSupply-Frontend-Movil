@@ -20,7 +20,14 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.julianrvillamil.ventas",
+      "networkSecurityConfig": "network_security_config",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBzSnY4trIq_3Wf6q5wfjP-FSgNt2nS3b8"
+        }
+      }
     },
     "androidStatusBar": {
       "backgroundColor": "#ffffff",
@@ -44,6 +51,14 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Esta app necesita acceso a tu ubicación para mostrar las rutas de visitas.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ]
     ],

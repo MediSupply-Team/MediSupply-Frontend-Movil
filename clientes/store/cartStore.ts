@@ -34,36 +34,8 @@ interface CartStore {
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
-  // Estado inicial con algunos productos de prueba
-  items: [
-    {
-      id: '1',
-      name: 'Guantes de látex',
-      price: 25.00,
-      quantity: 2,
-      image: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop',
-      code: 'GL-12345',
-      stock: 35
-    },
-    {
-      id: '2',
-      name: 'Mascarillas N95',
-      price: 25.00,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop',
-      code: 'MN-67890',
-      stock: 20
-    },
-    {
-      id: '3',
-      name: 'Desinfectante de manos',
-      price: 25.00,
-      quantity: 3,
-      image: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop',
-      code: 'DM-11223',
-      stock: 50
-    }
-  ],
+  // Estado inicial vacío
+  items: [],
   isOpen: false,
   
   // Acciones
