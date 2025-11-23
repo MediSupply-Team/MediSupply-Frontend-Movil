@@ -45,7 +45,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <APKSimulator />
+        {/* <APKSimulator /> */}
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -57,7 +57,7 @@ export default function RootLayout() {
           </Stack>
           <StatusBar style="auto" translucent={false}/>
         </ThemeProvider>
-        <APKSimulator />
+        {/* <APKSimulator /> */}
       </SafeAreaProvider>
     </QueryClientProvider>
   );
