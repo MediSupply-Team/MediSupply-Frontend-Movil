@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { ProductoCatalogo } from '@/types/catalog';
 
-const WS_URL = 'wss://medisupply-backend.duckdns.org/venta/catalog/api/catalog/items/ws';
+const WS_URL = 'wss://medisupply-backend.duckdns.org/venta/api/v1/catalog/items/ws';
 
 interface WebSocketMessage {
   items: ProductoCatalogo[];

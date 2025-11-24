@@ -22,7 +22,7 @@ interface UseCatalogWebSocketResult {
   refresh: () => void;
 }
 
-const WS_URL = 'wss://medisupply-backend.duckdns.org/venta/catalog/api/catalog/items/ws';
+const WS_URL = 'wss://medisupply-backend.duckdns.org/venta/api/v1/catalog/items/ws';
 const MAX_RECONNECT_ATTEMPTS = 5;
 const INITIAL_RECONNECT_DELAY = 1000;
 const MAX_RECONNECT_DELAY = 30000;
