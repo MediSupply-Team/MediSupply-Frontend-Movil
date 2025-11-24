@@ -293,7 +293,7 @@ export default function ClientesScreen() {
         />
       </View>
        {/* APK Debugger */}
-      <APKDebugger />
+      {/* <APKDebugger /> */}
     </SafeAreaView>
   );
 }
