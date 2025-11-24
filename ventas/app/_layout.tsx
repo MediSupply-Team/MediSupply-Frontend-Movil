@@ -5,12 +5,14 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+// import { APKSimulator } from '@/components/APKSimulator';
 
 import { useFonts } from 'expo-font';
 
 import { useEffect } from 'react';
 import "../global.css";
 
+import { APKSimulator } from '@/components/APKSimulator';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient({
@@ -43,8 +45,10 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
+        {/* <APKSimulator /> */}
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack>
+            <Stack.Screen name="login" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
             <Stack.Screen name="cliente/[id]" options={{ headerShown: false }} />
@@ -54,6 +58,7 @@ export default function RootLayout() {
           </Stack>
           <StatusBar style="auto" translucent={false}/>
         </ThemeProvider>
+        {/* <APKSimulator /> */}
       </SafeAreaProvider>
     </QueryClientProvider>
   );

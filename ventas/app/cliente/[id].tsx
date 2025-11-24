@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/theme';
 import { useCliente, useHistoricoCliente } from '@/hooks/useClientes';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -90,13 +90,27 @@ export default function ClienteDetalleScreen() {
     });
   };
 
+  const goBackOrHome = () => {
+    console.log('📱 Navegando atrás o a home desde Cliente Detalle');
+    if (router.canGoBack()) {
+      console.log('📱 Volviendo a la pantalla anterior');
+      router.back();
+    } else {
+      console.log('📱 No hay pantalla anterior, yendo al home');
+      // a qué tab quieres volver por defecto:
+      router.replace('/');         // primer tab (index.tsx)
+      // o: router.replace('/pedidos'); router.replace('/ruta'); router.replace('/videos');
+    }
+  };
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() => router.replace('/')}
+            hitSlop={{ top: 12, bottom: 22, left: 12, right: 12 }}
           >
             <MaterialIcons name="arrow-back-ios" size={20} color={Colors.light.neutral900} />
           </TouchableOpacity>
@@ -117,7 +131,8 @@ export default function ClienteDetalleScreen() {
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={() => router.back()}
+            onPress={() => router.replace('/')}
+            hitSlop={{ top: 12, bottom: 22, left: 12, right: 12 }}
           >
             <MaterialIcons name="arrow-back-ios" size={20} color={Colors.light.neutral900} />
           </TouchableOpacity>
@@ -146,12 +161,14 @@ export default function ClienteDetalleScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <MaterialIcons name="arrow-back-ios" size={20} color={Colors.light.neutral900} />
-        </TouchableOpacity>
+        <Link href="/" replace asChild>
+          <TouchableOpacity 
+            style={styles.backButton}
+            hitSlop={{ top: 12, bottom: 22, left: 12, right: 12 }}
+            >
+            <MaterialIcons name="arrow-back-ios" size={20} color={Colors.light.neutral900} />
+          </TouchableOpacity>
+        </Link>
         <Text style={styles.headerTitle}>Detalles del Cliente</Text>
         <View style={styles.headerSpacer} />
       </View>
@@ -319,7 +336,16 @@ export default function ClienteDetalleScreen() {
       {/* Footer Actions */}
       <View style={styles.footer}>
         <View style={styles.footerActions}>
-          <TouchableOpacity style={styles.primaryButton}>
+          <TouchableOpacity 
+            style={styles.primaryButton}
+            onPress={() => router.push({
+              pathname: '/visita/registrar' as any,
+              params: { 
+                clienteId: cliente?.id?.toString() || clienteId, // Usar el ID numérico del cliente
+                clienteData: JSON.stringify(cliente)
+              }
+            })}
+          >
             <MaterialIcons name="add-comment" size={20} color="white" />
             <Text style={styles.primaryButtonText}>Registrar Visita</Text>
           </TouchableOpacity>
@@ -345,27 +371,27 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.neutral100,
   },
   header: {
+    position: 'relative',
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
     elevation: 3,
   },
   backButton: {
-    padding: 4,
+    padding: 8,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.light.neutral900,
-    flex: 1,
-    textAlign: 'center',
-    marginLeft: -32,
+    position: 'absolute',
+  left: 0,
+  right: 0,
+  textAlign: 'center',
+  fontSize: 20,
+  fontWeight: 'bold',
+  color: Colors.light.neutral900,
+  // clave:
+  pointerEvents: 'none',
   },
   headerSpacer: {
     width: 32,

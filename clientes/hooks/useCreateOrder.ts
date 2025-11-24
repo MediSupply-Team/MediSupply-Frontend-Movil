@@ -26,20 +26,39 @@ export function useCreateOrder() {
     mutationFn: async (payload: CreateOrderPayload): Promise<CreateOrderResponse> => {
       const idempotencyKey = uuidv4();
       
-      // Formatear payload según el esquema del orders-service
-      const formattedPayload = {
-        customer_id: payload.customer_id,
-        created_by_role: "cliente",
-        source: "mobile-clientes",
-        items: payload.items.map(item => ({
-          sku: item.sku,
-          qty: item.qty
-        }))
+      // Formatear payload según el esquema del BFF (con wrapper "body")
+      const bffPayload = {
+        body: {
+          customer_id: payload.customer_id,
+          items: payload.items.map(item => ({
+            sku: item.sku,
+            qty: item.qty
+          }))
+        }
       };
       
-      const res = await ordersApi.post("/orders", formattedPayload, {
-        headers: { "Idempotency-Key": idempotencyKey },
+      console.log("🚀 [CREATE ORDER CLIENTES] Iniciando petición...");
+      console.log("📦 [CREATE ORDER CLIENTES] Payload original:", JSON.stringify(payload, null, 2));
+      console.log("📋 [CREATE ORDER CLIENTES] BFF Payload (con body wrapper):", JSON.stringify(bffPayload, null, 2));
+      console.log("🔑 [CREATE ORDER CLIENTES] Idempotency Key:", idempotencyKey);
+      console.log("🌐 [CREATE ORDER CLIENTES] URL base:", ordersApi.defaults.baseURL);
+      console.log("🎯 [CREATE ORDER CLIENTES] URL completa:", `${ordersApi.defaults.baseURL}`);
+      console.log("📋 [CREATE ORDER CLIENTES] Headers:", JSON.stringify({
+        "Content-Type": "application/json",
+        "Idempotency-Key": idempotencyKey
+      }, null, 2));
+      
+      const res = await ordersApi.post("", bffPayload, {
+        headers: { 
+          "Idempotency-Key": idempotencyKey,
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
       });
+      
+      console.log("✅ [CREATE ORDER CLIENTES] Respuesta exitosa:", res.status, res.statusText);
+      console.log("📄 [CREATE ORDER CLIENTES] Data recibida:", JSON.stringify(res.data, null, 2));
+      
       return res.data;
     },
   });

@@ -12,11 +12,21 @@ export function useCatalogProducts(params: CatalogoParams = {}) {
   return useQuery({
     queryKey: ["catalog", "items", params],
     queryFn: async (): Promise<CatalogoResponse> => {
-      const response = await catalogApi.get("/items", { params });
-      return response.data;
+      console.log("🚀 [HOOK] Starting catalog request with params:", params);
+      try {
+        const response = await catalogApi.get("/items", { params });
+        console.log("🎉 [HOOK] Catalog response received:", response.status);
+        console.log("🎉 [HOOK] Response data keys:", Object.keys(response.data || {}));
+        return response.data;
+      } catch (error) {
+        console.error("💥 [HOOK] Catalog request failed:", error);
+        throw error;
+      }
     },
     placeholderData: keepPreviousData, // Mantener datos previos mientras carga
     staleTime: 1000 * 60 * 5, // 5 minutos
+    retry: 1, // Solo 1 reintento para evitar spam en problemas de red
+    retryDelay: 2000, // Esperar 2 segundos entre reintentos
   });
 }
 
@@ -32,6 +42,8 @@ export function useSearchProducts(searchQuery: string, enabled = true) {
     },
     enabled: enabled && searchQuery.length > 2, // Solo buscar si hay más de 2 caracteres
     staleTime: 1000 * 30, // 30 segundos para búsquedas
+    retry: 1, // Solo 1 reintento
+    retryDelay: 2000,
   });
 }
 
@@ -47,6 +59,8 @@ export function useProductsByCategory(categoriaId: string, enabled = true) {
     },
     enabled: enabled && !!categoriaId,
     staleTime: 1000 * 60 * 10, // 10 minutos para categorías
+    retry: 1, // Solo 1 reintento
+    retryDelay: 2000,
   });
 }
 
