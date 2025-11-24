@@ -48,15 +48,15 @@ export default function LoginScreen() {
       // Navegar a la pantalla principal
       router.replace('/(tabs)');
     } catch (error: any) {
-      console.error('Login error:', error);
-      
       let errorMessage = 'No se pudo iniciar sesión. Verifique sus credenciales.';
       
       if (error.response?.status === 401) {
-        errorMessage = 'Email o contraseña incorrectos';
+        // Extraer el mensaje del backend si está disponible
+        const backendMessage = error.response?.data?.detail;
+        errorMessage = backendMessage || 'Credenciales incorrectas';
       } else if (error.response?.status === 404) {
         errorMessage = 'Usuario no encontrado';
-      } else if (error.message === 'Network Error') {
+      } else if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
         errorMessage = 'Error de conexión. Verifique su internet.';
       }
 

@@ -51,11 +51,6 @@ if (__DEV__) {
  * Iniciar sesión
  */
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
-  try {
-    const response = await authApi.post<AuthResponse>('/login', credentials);
-    return response.data;
-  } catch (error: any) {
-    console.error('[VENTAS AUTH] Login failed:', error);
-    throw error;
-  }
+  const response = await authApi.post<AuthResponse>('/login', credentials);
+  return response.data;
 }
