@@ -1,19 +1,21 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, RefreshControl, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import '../../global.css';
 import { useBuscarClientes, useClientes } from '../../hooks/useClientes';
 import type { Cliente } from '../../infrastructure/interfaces/cliente';
 import { APKDebugger } from '@/components/APKDebugger';
-
-// ID del vendedor - en una implementación real esto vendría del contexto de autenticación
-const VENDEDOR_ID = 'VEN001';
+import { useAuthStore } from '@/store/authStore';
 
 export default function ClientesScreen() {
   const [searchText, setSearchText] = useState('');
   const [showActiveOnly, setShowActiveOnly] = useState(true);
+  const { user, logout } = useAuthStore();
+
+  // Obtener el ID del vendedor desde el store de autenticación
+  const VENDEDOR_ID = user?.venta_id || 'VEN001';
 
   // Hook para listar todos los clientes
   const { 
@@ -35,7 +37,24 @@ export default function ClientesScreen() {
     searchText.length >= 2 // Solo buscar si hay al menos 2 caracteres
   );
 
-
+  // Manejar logout
+  const handleLogout = () => {
+    Alert.alert(
+      'Cerrar sesión',
+      '¿Está seguro que desea cerrar sesión?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Cerrar sesión',
+          style: 'destructive',
+          onPress: () => {
+            logout();
+            router.replace('/login');
+          },
+        },
+      ]
+    );
+  };
 
   // Determinar qué datos mostrar
   const datosAMostrar = useMemo(() => {
@@ -208,8 +227,11 @@ export default function ClientesScreen() {
             <Text className="text-xl font-public-bold text-neutral-900 flex-1 text-center">
               Clientes
             </Text>
-            <TouchableOpacity className="w-8 h-8 rounded-full bg-primary-500 items-center justify-center">
-              <MaterialIcons name="add" size={20} color="white" />
+            <TouchableOpacity 
+              className="w-8 h-8 rounded-full bg-red-500 items-center justify-center"
+              onPress={handleLogout}
+            >
+              <MaterialIcons name="logout" size={18} color="white" />
             </TouchableOpacity>
           </View>
           
