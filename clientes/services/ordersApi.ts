@@ -14,6 +14,12 @@ ordersApi.interceptors.request.use((config) => {
   const p = (config.params ?? {}) as Record<string, string>;
   Object.entries(p).forEach(([k, v]) => url.searchParams.set(k, String(v)));
   console.log("📤 Orders API:", (config.method ?? "get").toUpperCase(), url.toString());
+  
+  // Log auth header si existe
+  if (config.headers.Authorization) {
+    console.log("🔐 Auth header presente");
+  }
+  
   return config;
 });
 
